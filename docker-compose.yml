@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  front:
+    build: .
+    ports:
+      - "3700:3700"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+    environment:
+      NODE_ENV: development
