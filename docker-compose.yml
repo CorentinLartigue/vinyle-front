@@ -1,8 +1,7 @@
-version: "3.9"
-
 services:
   front:
     build: .
+    image: front-app
     ports:
       - "3700:3700"
     volumes:

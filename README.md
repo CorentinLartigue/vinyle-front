@@ -8,8 +8,6 @@ First, clone the repository:
 
 ```bash
 git clone https://github.com/CorentinLartigue/vinyle-front.git
-cd front
-
 ```
 
 Then, run the development server inside Docker using Docker Compose:

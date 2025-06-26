@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from "next/link";
+import img from '@/assets/img.png'
 
 const Navbar: React.FC = () => {
 
@@ -9,14 +10,16 @@ const Navbar: React.FC = () => {
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-4xl font-extrabold tracking-wide">
             <Link href="/" className="hover:text-[#f5f5dc] transition duration-300">
-              Collectif Horamanea
+              DoVinyl
             </Link>
           </div>
           <div>
             <img
-              src="/logo_site.png"
-              alt="Logo"
-              className="w-16 h-16 rounded-full shadow-lg border-4 border-white object-cover"
+                src={img.src}
+                alt="Logo"
+                width={48}
+                height={48}
+                className="h-12 w-12 object-cover rounded-full border-2 border-white shadow-md ml-4"
             />
           </div>
         </div>
