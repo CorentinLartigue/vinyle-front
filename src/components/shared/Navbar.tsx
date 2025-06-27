@@ -37,6 +37,12 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                                 <ChevronDown className="w-4 h-4 ml-1" />
                             </Link>
                         </div>
+                        <div className="relative group">
+                            <Link href="/account" className={`transition-colors flex items-center font-medium ${router.pathname === '/blog' ? 'text-orange-500' : 'text-gray-700 hover:text-orange-500'}`}>
+                                Compte
+                                <ChevronDown className="w-4 h-4 ml-1" />
+                            </Link>
+                        </div>
                     </div>
                 </nav>
 
@@ -68,9 +74,9 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                     </div>
 
                     <div className="flex items-center space-x-6">
-                        <Link href="/account" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
+                        <Link href="/login" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
                             <User className="w-5 h-5" />
-                            <span className="hidden lg:block text-sm">Compte</span>
+                            <span className="hidden lg:block text-sm">Connexion</span>
                         </Link>
                         <Link href="/wishlist" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
                             <Heart className="w-5 h-5" />
