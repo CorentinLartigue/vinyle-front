@@ -26,8 +26,8 @@ To build the optimized production Docker image and run it:
 
 ```bash 
 
-docker build -t Vinyle-front .
-docker run -p 3700:3700 Vinyle-front
+docker build -t vinyle-front .
+docker run -p 3700:3700 vinyle-front
 
 ```
 
