@@ -4,7 +4,7 @@ import { Guitar, Music, Music2, Music3, Mic } from 'lucide-react';
 
 const PopularCategories: React.FC = () => {
     const router = useRouter();
-    
+
     const categories = [
         { name: 'Rock', count: '234 articles', icon: Guitar },
         { name: 'Classique', count: '156 articles', icon: Music },
@@ -16,14 +16,15 @@ const PopularCategories: React.FC = () => {
     const handleCategoryClick = (categoryName: string) => {
         router.push(`/products?category=${categoryName.toLowerCase()}`);
     };
+
     return (
         <section className="py-16">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold text-center mb-12">Catégories Populaires</h2>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
                     {categories.map((category, index) => (
-                        <div 
-                            key={index} 
+                        <div
+                            key={index}
                             className="text-center group cursor-pointer"
                             onClick={() => handleCategoryClick(category.name)}
                         >
