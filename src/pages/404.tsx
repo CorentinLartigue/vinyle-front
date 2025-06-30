@@ -44,7 +44,7 @@ const Custom404 = () => {
                                     <Home className="w-5 h-5 mr-2" />
                                     Retour à l&apos;accueil
                                 </Link>
-                                <Link href="/products" className="inline-flex items-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors">
+                                <Link href="/product" className="inline-flex items-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors">
                                     <Search className="w-5 h-5 mr-2" />
                                     Parcourir les vinyles
                                 </Link>
@@ -76,7 +76,7 @@ const Custom404 = () => {
                             </div>
                             <h3 className="font-semibold mb-2">Rechercher</h3>
                             <p className="text-gray-600 text-sm mb-4">Trouvez vos vinyles préférés dans notre catalogue</p>
-                            <Link href="/products" className="text-orange-500 hover:text-orange-600 font-medium">
+                            <Link href="/product" className="text-orange-500 hover:text-orange-600 font-medium">
                                 Rechercher →
                             </Link>
                         </div>
@@ -87,24 +87,11 @@ const Custom404 = () => {
                             </div>
                             <h3 className="font-semibold mb-2">Catégories</h3>
                             <p className="text-gray-600 text-sm mb-4">Explorez par genre musical : Rock, Jazz, Blues...</p>
-                            <Link href="/#categories" className="text-orange-500 hover:text-orange-600 font-medium">
+                            <Link href="/category" className="text-orange-500 hover:text-orange-600 font-medium">
                                 Voir les catégories →
                             </Link>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            {/* Back button */}
-            <section className="py-8 bg-gray-100">
-                <div className="container mx-auto px-4 text-center">
-                    <button 
-                        onClick={() => window.history.back()} 
-                        className="inline-flex items-center text-gray-600 hover:text-orange-500 transition-colors"
-                    >
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        Retour à la page précédente
-                    </button>
                 </div>
             </section>
         </div>

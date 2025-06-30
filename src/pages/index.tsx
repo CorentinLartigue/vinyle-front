@@ -1,7 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
 import { Search, Check, Truck, Phone, CreditCard, RotateCcw, Disc3, Shield, Headphones, Mail, Gift } from 'lucide-react';
-import devanture from '@/assets/devanture.png'
+import Cover from '@/assets/cover.png'
+import Dovinyl from '@/assets/dovinyl.png'
+
 import PopularCategories from '@/components/home/PopularCategories';
 import ListeningSection from '@/components/home/ListeningSection';
 import RecommendedVinyl from '@/components/home/RecommendedVinyl';
@@ -12,9 +14,10 @@ const Index: React.FC = () => {
 
     return (
         <>
-            <section className="py-16">
-                <Image src={devanture} alt="Devanture DoVinyl" className='w-full h-auto'/>
+            <section className="pt-8 pb-8">
+                <Image src={Cover} alt="Cover DoVinyl" className='w-full h-auto'/>
             </section>
+
 
             <PopularCategories />
 
@@ -30,19 +33,7 @@ const Index: React.FC = () => {
                     <div className="flex flex-col lg:flex-row items-center gap-12">
                         <div className="lg:w-1/2">
                             <div className="relative">
-                                <div className="w-full h-80 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-orange-400 opacity-80"></div>
-                                    <div className="relative z-10 p-8">
-                                        <div className="text-center">
-                                            <h3 className="text-2xl font-bold text-white mb-4">DoVinyl</h3>
-                                            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center">
-                                                <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
-                                                    <div className="w-6 h-6 bg-black rounded-full"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <Image src={Dovinyl} alt="Devanture DoVinyl" className='w-full h-auto'/>
                             </div>
                         </div>
                         <div className="lg:w-1/2">

@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import Layout from "@layouts/Layout";
 import "@styles/index.css";
+
 import {ToastProvider} from "@context/ToastProvider";
 
 
