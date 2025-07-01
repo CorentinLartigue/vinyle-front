@@ -7,19 +7,20 @@ interface Product {
     title: string;
     artist: string;
     price: number;
-    originalPrice?: number;
     image: string;
     category: string;
+    description: string;
+    favoris: boolean;
 }
 
 const ListeningSection: React.FC = () => {
     const router = useRouter();
     
     const featuredProducts: Product[] = [
-        { id: 1, title: 'Abbey Road', artist: 'The Beatles', price: 24.99, image: '/api/placeholder/200/200', category: 'Rock' },
-        { id: 2, title: 'Blue Train', artist: 'John Coltrane', price: 19.99, image: '/api/placeholder/200/200', category: 'Jazz' },
-        { id: 3, title: 'Born Under a Bad Sign', artist: 'Albert King', price: 29.99, image: '/api/placeholder/200/200', category: 'Blues' },
-        { id: 4, title: 'La Traviata', artist: 'Giuseppe Verdi', price: 22.99, image: '/api/placeholder/200/200', category: 'Classic' }
+        { id: 1, title: 'Abbey Road', artist: 'The Beatles', price: 24.99, image: '/api/placeholder/200/200', category: 'Rock', description: 'L\'album légendaire des Beatles.', favoris: false },
+        { id: 2, title: 'Blue Train', artist: 'John Coltrane', price: 19.99, image: '/api/placeholder/200/200', category: 'Jazz', description: 'Un classique du jazz.', favoris: false },
+        { id: 3, title: 'Born Under a Bad Sign', artist: 'Albert King', price: 29.99, image: '/api/placeholder/200/200', category: 'Blues', description: 'Un album marquant du blues.', favoris: false },
+        { id: 4, title: 'La Traviata', artist: 'Giuseppe Verdi', price: 22.99, image: '/api/placeholder/200/200', category: 'Classic', description: 'Un opéra célèbre de Verdi.', favoris: false }
     ];
 
     const handleProductClick = (productId: number) => {
@@ -72,6 +73,7 @@ const ListeningSection: React.FC = () => {
                                         <div className="flex justify-between items-center">
                                             <span className="font-bold text-orange-500">{product.price}€</span>
                                         </div>
+                                        <p className="text-xs text-gray-500 mt-1">{product.description}</p>
                                     </div>
                                 </div>
                             ))}

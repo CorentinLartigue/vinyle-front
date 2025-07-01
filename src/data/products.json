@@ -4,103 +4,87 @@
     "name": "The Dark Side of the Moon",
     "artist": "Pink Floyd",
     "price": 29.99,
-    "originalPrice": 34.99,
-    "rating": 4.8,
-    "reviews": 125,
     "category": "rock",
     "releaseYear": 1973,
     "image": "/api/placeholder/200/200",
-    "inStock": true
+    "description": "Un album emblématique de Pink Floyd, sorti en 1973.",
+    "favoris": false
   },
   {
     "id": 2,
     "name": "Kind of Blue",
     "artist": "Miles Davis",
     "price": 24.99,
-    "originalPrice": 29.99,
-    "rating": 4.9,
-    "reviews": 98,
     "category": "jazz",
     "releaseYear": 1959,
     "image": "/api/placeholder/200/200",
-    "inStock": true
+    "description": "Le chef-d'œuvre du jazz par Miles Davis, sorti en 1959.",
+    "favoris": false
   },
   {
     "id": 3,
     "name": "Amazing Grace",
     "artist": "Aretha Franklin",
     "price": 22.99,
-    "originalPrice": 27.99,
-    "rating": 4.7,
-    "reviews": 76,
     "category": "gospel",
     "releaseYear": 1972,
     "image": "/api/placeholder/200/200",
-    "inStock": false
+    "description": "Un album gospel puissant d'Aretha Franklin, sorti en 1972.",
+    "favoris": false
   },
   {
     "id": 4,
     "name": "Live at the Regal",
     "artist": "B.B. King",
     "price": 26.99,
-    "originalPrice": 30.99,
-    "rating": 4.5,
-    "reviews": 53,
     "category": "blues",
     "releaseYear": 1965,
     "image": "/api/placeholder/200/200",
-    "inStock": true
+    "description": "L'un des meilleurs albums live de blues, par B.B. King.",
+    "favoris": false
   },
   {
     "id": 5,
     "name": "Symphonie No. 9",
     "artist": "Ludwig van Beethoven",
     "price": 18.99,
-    "originalPrice": 22.99,
-    "rating": 4.6,
-    "reviews": 61,
     "category": "classique",
     "releaseYear": 1824,
     "image": "/api/placeholder/200/200",
-    "inStock": true
+    "description": "La célèbre 9ème symphonie de Beethoven, un classique intemporel.",
+    "favoris": false
   },
   {
     "id": 6,
     "name": "Abbey Road",
     "artist": "The Beatles",
     "price": 32.99,
-    "originalPrice": 36.99,
-    "rating": 4.9,
-    "reviews": 203,
     "category": "rock",
     "releaseYear": 1969,
     "image": "/api/placeholder/200/200",
-    "inStock": true
+    "description": "L'album légendaire des Beatles, sorti en 1969.",
+    "favoris": false
   },
   {
     "id": 7,
     "name": "What's Going On",
     "artist": "Marvin Gaye",
     "price": 25.99,
-    "originalPrice": 29.99,
-    "rating": 4.8,
-    "reviews": 142,
     "category": "soul",
     "releaseYear": 1971,
     "image": "/api/placeholder/200/200",
-    "inStock": true
+    "description": "Un album soul marquant de Marvin Gaye, sorti en 1971.",
+    "favoris": false
   },
   {
     "id": 8,
     "name": "Blue Train",
     "artist": "John Coltrane",
     "price": 27.99,
-    "originalPrice": 31.99,
-    "rating": 4.7,
-    "reviews": 89,
     "category": "jazz",
     "releaseYear": 1957,
     "image": "/api/placeholder/200/200",
-    "inStock": true
+    "description": "Un classique du jazz par John Coltrane, sorti en 1957.",
+    "favoris": false
   }
 ]

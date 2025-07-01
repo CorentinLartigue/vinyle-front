@@ -7,9 +7,10 @@ interface Product {
     title: string;
     artist: string;
     price: number;
-    originalPrice?: number;
     image: string;
     category: string;
+    description: string;
+    favoris: boolean;
 }
 
 
@@ -17,10 +18,10 @@ const RecommendedVinyl: React.FC = () => {
     const router = useRouter();
     
     const featuredProducts: Product[] = [
-        { id: 1, title: 'Rumours', artist: 'Fleetwood Mac', price: 24.99, image: '/api/placeholder/200/200', category: 'Rock' },
-        { id: 2, title: 'A Love Supreme', artist: 'John Coltrane', price: 19.99, image: '/api/placeholder/200/200', category: 'Jazz' },
-        { id: 3, title: 'Electric Mud', artist: 'Muddy Waters', price: 29.99, image: '/api/placeholder/200/200', category: 'Blues' },
-        { id: 4, title: 'Symphonie n°9', artist: 'Beethoven', price: 22.99, image: '/api/placeholder/200/200', category: 'Classic' }
+        { id: 1, title: 'Rumours', artist: 'Fleetwood Mac', price: 24.99, image: '/api/placeholder/200/200', category: 'Rock', description: 'Un classique de Fleetwood Mac.', favoris: false },
+        { id: 2, title: 'A Love Supreme', artist: 'John Coltrane', price: 19.99, image: '/api/placeholder/200/200', category: 'Jazz', description: 'Un chef-d\'œuvre du jazz.', favoris: false },
+        { id: 3, title: 'Electric Mud', artist: 'Muddy Waters', price: 29.99, image: '/api/placeholder/200/200', category: 'Blues', description: 'Un album incontournable de Muddy Waters.', favoris: false },
+        { id: 4, title: 'Symphonie n°9', artist: 'Beethoven', price: 22.99, image: '/api/placeholder/200/200', category: 'Classic', description: 'La célèbre 9ème symphonie.', favoris: false }
     ];
 
     const handleProductClick = (productId: number) => {
@@ -65,7 +66,8 @@ const RecommendedVinyl: React.FC = () => {
                                 </button>
                             </div>
                             <h3 className="font-semibold mb-1 group-hover:text-orange-500 transition-colors">{product.title}</h3>
-                            <p className="text-sm text-gray-600">Album incontournable de la discographie</p>
+                            <p className="text-sm text-gray-600">{product.artist}</p>
+                            <p className="text-xs text-gray-500 mt-1">{product.description}</p>
                         </div>
                     ))}
                 </div>

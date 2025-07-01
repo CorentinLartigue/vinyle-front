@@ -8,7 +8,6 @@ const ProductSorting = ({ sortBy, setSortBy }) => {
         { value: 'oldest', label: 'Plus anciens' },
         { value: 'price-low', label: 'Prix croissant' },
         { value: 'price-high', label: 'Prix décroissant' },
-        { value: 'rating', label: 'Mieux notés' },
         { value: 'name', label: 'Nom A-Z' }
     ];
 

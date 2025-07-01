@@ -7,9 +7,29 @@ import { Filter } from 'lucide-react';
 
 import productsData from '@data/products.json';
 
+// Définition du type Product selon la nouvelle structure
+type Product = {
+  id: number;
+  name: string;
+  artist: string;
+  price: number;
+  category: string;
+  releaseYear: number;
+  image: string;
+  description: string;
+  favoris: boolean;
+};
+
+type Filters = {
+  priceRange: [number, number];
+  categories: string[];
+  artists: string[];
+  releaseYear: [number, number];
+};
+
 const PRODUCTS_PER_PAGE = 9;
 
-const useFilteredProducts = (products, category, filters) => {
+const useFilteredProducts = (products: Product[], category: string | string[] | undefined, filters: Filters) => {
   return useMemo(() => {
     let filtered = products;
 
@@ -44,7 +64,7 @@ const useFilteredProducts = (products, category, filters) => {
   }, [products, category, filters]);
 };
 
-const useSortedProducts = (products, sortBy) => {
+const useSortedProducts = (products: Product[], sortBy: string) => {
   return useMemo(() => {
     const sorted = [...products];
     switch (sortBy) {
@@ -52,8 +72,6 @@ const useSortedProducts = (products, sortBy) => {
         return sorted.sort((a, b) => a.price - b.price);
       case 'price-high':
         return sorted.sort((a, b) => b.price - a.price);
-      case 'rating':
-        return sorted.sort((a, b) => b.rating - a.rating);
       case 'newest':
         return sorted.sort((a, b) => b.releaseYear - a.releaseYear);
       case 'oldest':
@@ -66,13 +84,13 @@ const useSortedProducts = (products, sortBy) => {
   }, [products, sortBy]);
 };
 
-const getFilterData = (products) => {
+const getFilterData = (products: Product[]) => {
   if (products.length === 0) {
     return {
-      categories: [],
-      artists: [],
-      priceRange: [0, 0],
-      yearRange: [0, 0],
+      categories: [] as string[],
+      artists: [] as string[],
+      priceRange: [0, 0] as [number, number],
+      yearRange: [0, 0] as [number, number],
     };
   }
   return {
@@ -81,11 +99,11 @@ const getFilterData = (products) => {
     priceRange: [
       Math.min(...products.map((p) => p.price)),
       Math.max(...products.map((p) => p.price)),
-    ],
+    ] as [number, number],
     yearRange: [
       Math.min(...products.map((p) => p.releaseYear)),
       Math.max(...products.map((p) => p.releaseYear)),
-    ],
+    ] as [number, number],
   };
 };
 
@@ -100,7 +118,7 @@ const ProductList = () => {
   const filterData = useMemo(() => getFilterData(allProducts), [allProducts]);
 
   // Initialisation des filtres avec les plages dynamiques
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     priceRange: filterData.priceRange,
     categories: [],
     artists: [],
@@ -128,7 +146,7 @@ const ProductList = () => {
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const paginatedProducts = sortedProducts.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
 
-  // Reset page lors d’un changement de filtres ou catégorie ou tri
+  // Reset page lors d'un changement de filtres ou catégorie ou tri
   React.useEffect(() => {
     setCurrentPage(1);
   }, [filters, category, sortBy]);
@@ -162,7 +180,6 @@ const ProductList = () => {
                   filters={filters}
                   setFilters={setFilters}
                   filterData={filterData}
-                  productsCount={filteredProducts.length}
               />
             </aside>
 

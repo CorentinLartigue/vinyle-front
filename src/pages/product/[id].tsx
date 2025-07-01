@@ -65,7 +65,6 @@ const ProductDetailPage = () => {
                 <div className="flex gap-2 mt-6">
                   <button
                     className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded font-semibold text-sm shadow"
-                    disabled={!product.inStock}
                   >
                     Add To Cart
                   </button>

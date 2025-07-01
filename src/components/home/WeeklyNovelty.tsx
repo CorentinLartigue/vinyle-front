@@ -8,19 +8,20 @@ interface Product {
     title: string;
     artist: string;
     price: number;
-    originalPrice?: number;
     image: string;
     category: string;
+    description: string;
+    favoris: boolean;
 }
 
 const WeeklyNovelty: React.FC = () => {
     const router = useRouter();
     
     const newReleases: Product[] = [
-        { id: 5, title: 'Dark Side of the Moon', artist: 'Pink Floyd', price: 27.99, originalPrice: 34.99, image: '/api/placeholder/200/200', category: 'Rock' },
-        { id: 6, title: 'Kind of Blue', artist: 'Miles Davis', price: 31.99, originalPrice: 39.99, image: '/api/placeholder/200/200', category: 'Jazz' },
-        { id: 7, title: 'The Blues Collection', artist: 'B.B. King', price: 25.99, originalPrice: 32.99, image: '/api/placeholder/200/200', category: 'Blues' },
-        { id: 8, title: 'Amazing Grace', artist: 'Aretha Franklin', price: 28.99, originalPrice: 35.99, image: '/api/placeholder/200/200', category: 'Gospel' }
+        { id: 5, title: 'Dark Side of the Moon', artist: 'Pink Floyd', price: 27.99, image: '/api/placeholder/200/200', category: 'Rock', description: 'Un album emblématique de Pink Floyd.', favoris: false },
+        { id: 6, title: 'Kind of Blue', artist: 'Miles Davis', price: 31.99, image: '/api/placeholder/200/200', category: 'Jazz', description: 'Le chef-d\'œuvre du jazz.', favoris: false },
+        { id: 7, title: 'The Blues Collection', artist: 'B.B. King', price: 25.99, image: '/api/placeholder/200/200', category: 'Blues', description: 'Un classique du blues.', favoris: false },
+        { id: 8, title: 'Amazing Grace', artist: 'Aretha Franklin', price: 28.99, image: '/api/placeholder/200/200', category: 'Gospel', description: 'Un album gospel puissant.', favoris: false }
     ];
 
     const handleProductClick = (productId: number) => {
@@ -63,10 +64,8 @@ const WeeklyNovelty: React.FC = () => {
                             <p className="text-sm text-gray-600 mb-2">{product.artist}</p>
                             <div className="flex items-center space-x-2">
                                 <span className="font-bold text-orange-500">{product.price}€</span>
-                                {product.originalPrice && (
-                                    <span className="text-sm text-gray-500 line-through">{product.originalPrice}€</span>
-                                )}
                             </div>
+                            <p className="text-xs text-gray-500 mt-1">{product.description}</p>
                         </div>
                     ))}
                 </div>
