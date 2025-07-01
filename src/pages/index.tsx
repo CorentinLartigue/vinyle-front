@@ -15,7 +15,7 @@ const Index: React.FC = () => {
     return (
         <>
             <section className="pt-8 pb-8">
-                <Image src={Cover} alt="Cover DoVinyl" className='w-full h-auto'/>
+                <Image src={Cover} alt="Cover DoVinyl" className='w-full h-130 object-cover'/>
             </section>
 
 

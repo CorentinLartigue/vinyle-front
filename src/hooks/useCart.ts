@@ -11,7 +11,6 @@ interface CartItem {
 
 export const useCart = () => {
     const [cartItems, setCartItems] = useState<CartItem[]>([
-        // Données d'exemple pour la démonstration
         {
             id: 1,
             title: 'Abbey Road',
