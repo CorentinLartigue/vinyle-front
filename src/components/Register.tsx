@@ -53,7 +53,7 @@ const Register = () => {
                   alt="DoVinyl Logo"
                   className="w-auto h-8 mr-2"
                 />
-                <h2 className="text-xl font-bold text-gray-800">FoodTrove</h2>
+                <h2 className="text-xl font-bold text-gray-800">DoVinyl  </h2>
               </div>
             </div>
 
