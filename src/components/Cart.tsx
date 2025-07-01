@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, Minus, Trash2, ArrowLeft, ShoppingBag, Gift, Shield, CreditCard } from 'lucide-react';
 import Link from 'next/link';
+import { useToast } from "../context/ToastProvider";
 
 interface CartItem {
     id: number;
@@ -31,6 +32,8 @@ const Cart: React.FC<CartProps> = ({
     const totalBeforeShipping = getCartTotal();
     const isEligibleForFreeShipping = totalBeforeShipping >= freeShippingThreshold;
     const finalTotal = totalBeforeShipping + (isEligibleForFreeShipping ? 0 : shippingCost);
+
+    const { showError, showSuccess } = useToast();
 
     const handleQuantityChange = (id: number, newQuantity: number) => {
         if (newQuantity === 0) {
@@ -226,7 +229,35 @@ const Cart: React.FC<CartProps> = ({
                                     </div>
                                 </div>
 
-                                <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-4 px-4 rounded-xl font-bold mt-6 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <button 
+                                    className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-4 px-4 rounded-xl font-bold mt-6 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                    onClick={async () => {
+                                        try {
+                                            const response = await fetch('http://localhost:3000/api/stripe/checkout-session', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'accept': '*/*',
+                                                },
+                                                body: JSON.stringify({
+                                                    amount: Math.round(finalTotal * 100), 
+                                                    currency: 'eur',
+                                                    successUrl: 'http://localhost:3700/success',
+                                                    cancelUrl: 'http://localhost:3700/cancel',
+                                                }),
+                                            });
+                                            const data = await response.json();
+                                            if (data.url) {
+                                                showSuccess('Redirection vers le paiement Stripe...');
+                                                window.location.href = data.url;
+                                            } else {
+                                                showError('Erreur: URL de paiement non reçue.\nRéponse complète: ' + JSON.stringify(data, null, 2));
+                                            }
+                                        } catch (error) {
+                                            showError('Erreur lors de la redirection vers Stripe: ' + error);
+                                        }
+                                    }}
+                                >
                                     Procéder au paiement
                                 </button>
 
