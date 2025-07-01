@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Rock",
+    "count": 234,
+    "icon": "Guitar"
+  },
+  {
+    "name": "Classique",
+    "count": 156,
+    "icon": "Music"
+  },
+  {
+    "name": "Jazz",
+    "count": 89,
+    "icon": "Music2"
+  },
+  {
+    "name": "Blues",
+    "count": 123,
+    "icon": "Music3"
+  },
+  {
+    "name": "Gospel",
+    "count": 67,
+    "icon": "Mic"
+  }
+] 
