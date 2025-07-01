@@ -27,8 +27,17 @@ const CartModal: React.FC<CartModalProps> = ({
     onRemoveItem,
 }) => {
 
+    const shippingCost = 3.90;
+    const freeShippingThreshold = 60;
+    
+    const getSubtotal = () => {
+        return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    };
+
     const getTotalPrice = () => {
-        return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2);
+        const subtotal = getSubtotal();
+        const shipping = subtotal >= freeShippingThreshold ? 0 : shippingCost;
+        return (subtotal + shipping).toFixed(2);
     };
 
     const getTotalItems = () => {
@@ -148,10 +157,58 @@ const CartModal: React.FC<CartModalProps> = ({
                         <div className={`border-t border-gray-200 p-4 space-y-4 bg-white transform transition-all duration-300 delay-200 ${
                             isOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                         }`}>
-                            {/* Total */}
-                            <div className="flex justify-between items-center">
-                                <span className="text-lg font-semibold">Total :</span>
-                                <span className="text-xl font-bold text-orange-500">{getTotalPrice()}€</span>
+                            {/* Shipping info */}
+                            {getSubtotal() < freeShippingThreshold && (
+                                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-3 rounded-lg border border-blue-200">
+                                    <div className="flex items-center space-x-2 mb-2">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <span className="text-sm font-semibold text-blue-800">Livraison : {shippingCost.toFixed(2)}€</span>
+                                    </div>
+                                    <p className="text-xs text-blue-700 mb-2">
+                                        Plus que <span className="font-bold">{(freeShippingThreshold - getSubtotal()).toFixed(2)}€</span> pour la livraison gratuite !
+                                    </p>
+                                    <div className="bg-blue-200 rounded-full h-1.5">
+                                        <div 
+                                            className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+                                            style={{ width: `${Math.min((getSubtotal() / freeShippingThreshold) * 100, 100)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {getSubtotal() >= freeShippingThreshold && (
+                                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-lg border border-green-200">
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <span className="text-sm font-semibold text-green-800">Livraison gratuite !</span>
+                                    </div>
+                                    <p className="text-xs text-green-700 mt-1">
+                                        Votre commande bénéficie de la livraison offerte
+                                    </p>
+                                </div>
+                            )}
+                            
+                            {/* Order Summary */}
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Sous-total</span>
+                                    <span className="font-medium">{getSubtotal().toFixed(2)}€</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Livraison</span>
+                                    <span className="font-medium">
+                                        {getSubtotal() >= freeShippingThreshold ? (
+                                            <span className="text-green-600">Gratuite</span>
+                                        ) : (
+                                            `${shippingCost.toFixed(2)}€`
+                                        )}
+                                    </span>
+                                </div>
+                                <hr className="border-gray-200" />
+                                <div className="flex justify-between items-center">
+                                    <span className="text-lg font-semibold">Total :</span>
+                                    <span className="text-xl font-bold text-orange-500">{getTotalPrice()}€</span>
+                                </div>
                             </div>
 
                             {/* Actions */}
