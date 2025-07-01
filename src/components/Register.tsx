@@ -44,21 +44,21 @@ const Register: React.FC = () => {
           </div>
         </div>
 
-        {/* Formulaire d’inscription */}
-        <div className="py-16">
-          <div className="max-w-lg mx-auto">
-            <div className="bg-white rounded-lg shadow-md p-8 border border-gray-200">
-              {/* Logo */}
-              <div className="text-center mb-8">
-                <div className="flex items-center justify-center mb-4">
-                  <Image
-                      src={Gramophone}
-                      alt="Logo DoVinyl"
-                      className="w-auto h-8 mr-2"
-                  />
-                  <h2 className="text-xl font-bold text-gray-800">DoVinyl</h2>
-                </div>
+      {/* Register Form Section */}
+      <div className="py-16">
+        <div className="max-w-lg mx-auto">
+          <div className="bg-white rounded-lg shadow-md p-8 border border-gray-200">
+            {/* Logo dans le formulaire */}
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center mb-4">
+                <Image 
+                  src={Gramophone}
+                  alt="DoVinyl Logo"
+                  className="w-auto h-8 mr-2"
+                />
+                <h2 className="text-xl font-bold text-gray-800">DoVinyl  </h2>
               </div>
+            </div>
 
               {/* Formulaire */}
               <div className="space-y-5">
