@@ -34,10 +34,10 @@ const Footer: React.FC = () => {
             <div className="w-full md:w-1/3 flex flex-col items-center">
               <h3 className="font-semibold mb-4">Entreprise</h3>
               <ul className="space-y-2 text-gray-400 text-center">
-                <li><Link href="#about" className="hover:text-white transition-colors">À propos de nous</Link></li>
-                <li><Link href="#delivery" className="hover:text-white transition-colors">Informations de livraison</Link></li>
-                <li><Link href="#privacy" className="hover:text-white transition-colors">Politique de confidentialité</Link></li>
-                <li><Link href="#terms" className="hover:text-white transition-colors">Conditions générales</Link></li>
+                <li><Link href="/about" className="hover:text-white transition-colors">À propos de nous</Link></li>
+                <li><Link href="/delivery" className="hover:text-white transition-colors">Informations de livraison</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Politique de confidentialité</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Conditions générales</Link></li>
               </ul>
             </div>
             <div className="w-full md:w-1/3 flex flex-col items-center">
