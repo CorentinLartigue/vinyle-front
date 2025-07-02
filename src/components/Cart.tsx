@@ -4,18 +4,18 @@ import Link from 'next/link';
 import { useToast } from "../context/ToastProvider";
 
 interface CartItem {
-    id: number;
-    title: string;
-    artist: string;
+    id: string | number;
+    productName: string;
+    artistInfos?: Array<{ name: string; bio?: string }>;
     price: number;
     quantity: number;
-    image: string;
+    imagePath?: string;
 }
 
 interface CartProps {
     cartItems: CartItem[];
-    onUpdateQuantity: (id: number, quantity: number) => void;
-    onRemoveItem: (id: number) => void;
+    onUpdateQuantity: (id: string | number, quantity: number) => void;
+    onRemoveItem: (id: string | number) => void;
     onClearCart: () => void;
     getCartTotal: () => number;
 }
@@ -35,7 +35,7 @@ const Cart: React.FC<CartProps> = ({
 
     const { showError, showSuccess } = useToast();
 
-    const handleQuantityChange = (id: number, newQuantity: number) => {
+    const handleQuantityChange = (id: string | number, newQuantity: number) => {
         if (newQuantity === 0) {
             onRemoveItem(id);
         } else {
@@ -98,74 +98,80 @@ const Cart: React.FC<CartProps> = ({
                                 </div>
 
                                 <div className="p-6 space-y-6">
-                                    {cartItems.map((item, index) => (
-                                        <div 
-                                            key={item.id} 
-                                            className="flex items-center space-x-4 p-4 border border-gray-200 rounded-xl hover:shadow-md transition-all duration-200 bg-white"
-                                            style={{
-                                                animation: `fadeInUp 0.3s ease-out ${index * 0.1}s both`
-                                            }}
-                                        >
-                                            {/* Image */}
-                                            <div className="w-24 h-24 bg-gradient-to-br from-gray-800 to-black rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                                                <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
-                                                    <div className="w-5 h-5 bg-black rounded-full"></div>
+                                    {cartItems.map((item, index) => {
+                                        const artistName = item.artistInfos && item.artistInfos.length > 0 
+                                            ? item.artistInfos[0].name 
+                                            : 'Artiste inconnu';
+                                        
+                                        return (
+                                            <div 
+                                                key={item.id} 
+                                                className="flex items-center space-x-4 p-4 border border-gray-200 rounded-xl hover:shadow-md transition-all duration-200 bg-white"
+                                                style={{
+                                                    animation: `fadeInUp 0.3s ease-out ${index * 0.1}s both`
+                                                }}
+                                            >
+                                                {/* Image */}
+                                                <div className="w-24 h-24 bg-gradient-to-br from-gray-800 to-black rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                                                    <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+                                                        <div className="w-5 h-5 bg-black rounded-full"></div>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            {/* Product Info */}
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-xl text-gray-800 mb-1">{item.title}</h3>
-                                                <p className="text-gray-600 mb-2">{item.artist}</p>
-                                                <div className="flex items-center space-x-2">
-                                                    <span className="text-lg font-bold text-orange-500">{item.price}€</span>
-                                                    <span className="text-sm text-gray-500">l'unité</span>
+                                                {/* Product Info */}
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-bold text-xl text-gray-800 mb-1">{item.productName}</h3>
+                                                    <p className="text-gray-600 mb-2">{artistName}</p>
+                                                    <div className="flex items-center space-x-2">
+                                                        <span className="text-lg font-bold text-orange-500">{item.price}€</span>
+                                                        <span className="text-sm text-gray-500">l'unité</span>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            {/* Quantity Controls */}
-                                            <div className="flex items-center space-x-4">
-                                                <div className="flex items-center space-x-2 bg-gray-100 rounded-lg px-4 py-2">
+                                                {/* Quantity Controls */}
+                                                <div className="flex items-center space-x-4">
+                                                    <div className="flex items-center space-x-2 bg-gray-100 rounded-lg px-4 py-2">
+                                                        <button
+                                                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                                                            className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full flex items-center justify-center transition-colors shadow-sm"
+                                                            disabled={item.quantity <= 1}
+                                                        >
+                                                            <Minus className="w-4 h-4" />
+                                                        </button>
+                                                        
+                                                        <span className="text-lg font-semibold w-8 text-center">
+                                                            {item.quantity}
+                                                        </span>
+                                                        
+                                                        <button
+                                                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                                                            className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full flex items-center justify-center transition-colors shadow-sm"
+                                                        >
+                                                            <Plus className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+
                                                     <button
-                                                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                                                        className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full flex items-center justify-center transition-colors shadow-sm"
-                                                        disabled={item.quantity <= 1}
+                                                        onClick={() => onRemoveItem(item.id)}
+                                                        className="p-3 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                        title="Supprimer l'article"
                                                     >
-                                                        <Minus className="w-4 h-4" />
-                                                    </button>
-                                                    
-                                                    <span className="text-lg font-semibold w-8 text-center">
-                                                        {item.quantity}
-                                                    </span>
-                                                    
-                                                    <button
-                                                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                                                        className="w-8 h-8 bg-white hover:bg-gray-50 rounded-full flex items-center justify-center transition-colors shadow-sm"
-                                                    >
-                                                        <Plus className="w-4 h-4" />
+                                                        <Trash2 className="w-5 h-5" />
                                                     </button>
                                                 </div>
 
-                                                <button
-                                                    onClick={() => onRemoveItem(item.id)}
-                                                    className="p-3 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                                    title="Supprimer l'article"
-                                                >
-                                                    <Trash2 className="w-5 h-5" />
-                                                </button>
+                                                {/* Subtotal */}
+                                                <div className="text-right min-w-0">
+                                                    <p className="text-xl font-bold text-orange-500">
+                                                        {(item.price * item.quantity).toFixed(2)}€
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">
+                                                        {item.quantity > 1 && `${item.quantity} × ${item.price}€`}
+                                                    </p>
+                                                </div>
                                             </div>
-
-                                            {/* Subtotal */}
-                                            <div className="text-right min-w-0">
-                                                <p className="text-xl font-bold text-orange-500">
-                                                    {(item.price * item.quantity).toFixed(2)}€
-                                                </p>
-                                                <p className="text-sm text-gray-500">
-                                                    {item.quantity > 1 && `${item.quantity} × ${item.price}€`}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
 
@@ -198,84 +204,51 @@ const Cart: React.FC<CartProps> = ({
                                             {isEligibleForFreeShipping ? (
                                                 <span className="text-green-600 font-bold">Gratuite !</span>
                                             ) : (
-                                                `${shippingCost.toFixed(2)}€`
+                                                <span>{shippingCost.toFixed(2)}€</span>
                                             )}
                                         </span>
                                     </div>
-
+                                    
                                     {!isEligibleForFreeShipping && (
-                                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
-                                            <div className="flex items-center space-x-2 mb-2">
-                                                <Gift className="w-5 h-5 text-blue-600" />
-                                                <span className="font-semibold text-blue-800">Livraison gratuite</span>
-                                            </div>
-                                            <p className="text-sm text-blue-700">
-                                                Plus que <span className="font-bold">{(freeShippingThreshold - totalBeforeShipping).toFixed(2)}€</span> pour en bénéficier !
-                                            </p>
-                                            <div className="mt-2 bg-blue-200 rounded-full h-2">
-                                                <div 
-                                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                                    style={{ width: `${Math.min((totalBeforeShipping / freeShippingThreshold) * 100, 100)}%` }}
-                                                ></div>
+                                        <div className="text-sm text-gray-500 bg-green-50 p-3 rounded-lg">
+                                            <div className="flex items-center">
+                                                <Gift className="w-4 h-4 mr-2 text-green-600" />
+                                                <span>
+                                                    Plus que {(freeShippingThreshold - totalBeforeShipping).toFixed(2)}€ pour la livraison gratuite !
+                                                </span>
                                             </div>
                                         </div>
                                     )}
                                     
-                                    <hr className="border-gray-200 my-4" />
-                                    
-                                    <div className="flex justify-between text-xl font-bold py-2">
-                                        <span>Total</span>
-                                        <span className="text-orange-500">{finalTotal.toFixed(2)}€</span>
+                                    <div className="border-t border-gray-200 pt-4">
+                                        <div className="flex justify-between">
+                                            <span className="text-lg font-bold text-gray-800">Total</span>
+                                            <span className="text-xl font-bold text-orange-500">{finalTotal.toFixed(2)}€</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <button 
-                                    className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-4 px-4 rounded-xl font-bold mt-6 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                                    onClick={async () => {
-                                        try {
-                                            const response = await fetch('http://localhost:3000/api/stripe/checkout-session', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'accept': '*/*',
-                                                },
-                                                body: JSON.stringify({
-                                                    amount: Math.round(finalTotal * 100), 
-                                                    currency: 'eur',
-                                                    successUrl: 'http://localhost:3700/success',
-                                                    cancelUrl: 'http://localhost:3700/cancel',
-                                                }),
-                                            });
-                                            const data = await response.json();
-                                            if (data.url) {
-                                                showSuccess('Redirection vers le paiement Stripe...');
-                                                window.location.href = data.url;
-                                            } else {
-                                                showError('Erreur: URL de paiement non reçue.\nRéponse complète: ' + JSON.stringify(data, null, 2));
-                                            }
-                                        } catch (error) {
-                                            showError('Erreur lors de la redirection vers Stripe: ' + error);
-                                        }
+                                {/* Security & Payment Info */}
+                                <div className="mt-6 space-y-3">
+                                    <div className="flex items-center text-sm text-gray-600">
+                                        <Shield className="w-4 h-4 mr-2" />
+                                        <span>Paiement sécurisé</span>
+                                    </div>
+                                    <div className="flex items-center text-sm text-gray-600">
+                                        <CreditCard className="w-4 h-4 mr-2" />
+                                        <span>Cartes acceptées</span>
+                                    </div>
+                                </div>
+
+                                {/* Checkout Button */}
+                                <button
+                                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-lg transition-colors mt-6 shadow-lg hover:shadow-xl"
+                                    onClick={() => {
+                                        showSuccess('Fonctionnalité de paiement à venir !');
                                     }}
                                 >
                                     Procéder au paiement
                                 </button>
-
-                                {/* Security badges */}
-                                <div className="mt-6 space-y-3">
-                                    <div className="flex items-center space-x-3 text-sm text-gray-600">
-                                        <Shield className="w-5 h-5 text-green-500" />
-                                        <span>Paiement sécurisé SSL</span>
-                                    </div>
-                                    <div className="flex items-center space-x-3 text-sm text-gray-600">
-                                        <CreditCard className="w-5 h-5 text-blue-500" />
-                                        <span>Cartes bancaires acceptées</span>
-                                    </div>
-                                    <div className="flex items-center space-x-3 text-sm text-gray-600">
-                                        <Gift className="w-5 h-5 text-purple-500" />
-                                        <span>Emballage soigné inclus</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

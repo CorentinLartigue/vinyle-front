@@ -1,22 +1,35 @@
 import React from 'react';
 
-const RangeFilter = ({
-                         minValue,
-                         maxValue,
-                         range,
-                         step = 1,
-                         onChangeRange,
-                         unit = '',
-                     }) => {
+interface RangeFilterProps {
+    minValue: number;
+    maxValue: number;
+    range: [number, number];
+    step?: number;
+    onChangeRange: (range: [number, number]) => void;
+    unit?: string;
+}
 
-    const updateMin = (value) => {
+const RangeFilter: React.FC<RangeFilterProps> = ({
+    minValue,
+    maxValue,
+    range,
+    step = 1,
+    onChangeRange,
+    unit = '',
+}) => {
+    // Safety check for undefined range
+    if (!range || !Array.isArray(range) || range.length !== 2) {
+        return null; // or return a loading state/error message
+    }
+
+    const updateMin = (value: string) => {
         const val = Number(value);
         if (val <= range[1]) {
             onChangeRange([val, range[1]]);
         }
     };
 
-    const updateMax = (value) => {
+    const updateMax = (value: string) => {
         const val = Number(value);
         if (val >= range[0]) {
             onChangeRange([range[0], val]);

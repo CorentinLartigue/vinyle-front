@@ -5,10 +5,12 @@ import { ShoppingCart, Search, User, Heart, ChevronDown } from 'lucide-react';
 import Gramophone from '@/assets/gramophone.png'
 import Image from 'next/image';
 import CartModal from '@/components/shared/CartModal';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/context/CartProvider';
+import { useProfile } from '@/context/ProfileProvider';
 
 const Navbar: React.FC = () => {
     const router = useRouter();
+    const profile = useProfile();
     const {
         cartItems,
         isCartOpen,
@@ -18,6 +20,13 @@ const Navbar: React.FC = () => {
         openCart,
         closeCart
     } = useCart();
+
+    const handleWishlistClick = (e: React.MouseEvent) => {
+        if (!profile) {
+            e.preventDefault();
+            router.push('/login');
+        }
+    };
 
     return (
         <>
@@ -46,12 +55,14 @@ const Navbar: React.FC = () => {
                                     <ChevronDown className="w-4 h-4 ml-1" />
                                 </Link>
                             </div>
-                            <div className="relative group">
-                                <Link href="/account" className={`transition-colors flex items-center font-medium ${router.pathname === '/account' ? 'text-orange-500' : 'text-gray-700 hover:text-orange-500'}`}>
-                                    Compte
-                                    <ChevronDown className="w-4 h-4 ml-1" />
-                                </Link>
-                            </div>
+                            {profile && (
+                                <div className="relative group">
+                                    <Link href="/account" className={`transition-colors flex items-center font-medium ${router.pathname === '/account' ? 'text-orange-500' : 'text-gray-700 hover:text-orange-500'}`}>
+                                        Compte
+                                        <ChevronDown className="w-4 h-4 ml-1" />
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </nav>
 
@@ -83,14 +94,32 @@ const Navbar: React.FC = () => {
                         </div>
 
                         <div className="flex items-center space-x-6">
-                            <Link href="/login" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
-                                <User className="w-5 h-5" />
-                                <span className="hidden lg:block text-sm">Connexion</span>
-                            </Link>
-                            <Link href="/wishlist" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
-                                <Heart className="w-5 h-5" />
-                                <span className="hidden lg:block text-sm">Favoris</span>
-                            </Link>
+                            {profile ? (
+                                <>
+                                    <Link href="/account" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
+                                        <User className="w-5 h-5" />
+                                        <span className="hidden lg:block text-sm">{profile.firstName}</span>
+                                    </Link>
+                                    <Link href="/wishlist" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
+                                        <Heart className="w-5 h-5" />
+                                        <span className="hidden lg:block text-sm">Favoris</span>
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href="/login" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
+                                        <User className="w-5 h-5" />
+                                        <span className="hidden lg:block text-sm">Connexion</span>
+                                    </Link>
+                                    <button 
+                                        onClick={handleWishlistClick}
+                                        className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors"
+                                    >
+                                        <Heart className="w-5 h-5" />
+                                        <span className="hidden lg:block text-sm">Favoris</span>
+                                    </button>
+                                </>
+                            )}
                             <button 
                                 onClick={openCart}
                                 className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors relative"

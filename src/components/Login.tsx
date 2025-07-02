@@ -53,26 +53,26 @@ const LoginSection: React.FC = () => {
             <div className="space-y-5">
               <div>
                 <label className="block text-sm text-gray-600 mb-2">
-                  Email Address*
+                  Adresse email*
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter Your Email"
+                  placeholder="Entrez votre email"
                   className="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-orange-400 focus:border-orange-400"
                 />
               </div>
 
               <div>
                 <label className="block text-sm text-gray-600 mb-2">
-                  Password*
+                  Mot de passe*
                 </label>
                 <input
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter Your password"
+                  value={motDePasse}
+                  onChange={(e) => setMotDePasse(e.target.value)}
+                  placeholder="Entrez votre mot de passe"
                   className="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-orange-400 focus:border-orange-400"
                 />
               </div>
@@ -81,14 +81,14 @@ const LoginSection: React.FC = () => {
                 <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
+                    checked={souvenirDeMoi}
+                    onChange={(e) => setSouvenirDeMoi(e.target.checked)}
                     className="w-4 h-4 text-orange-500 border-gray-300 rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Remember Me</span>
+                  <span className="ml-2 text-sm text-gray-600">Se souvenir de moi</span>
                 </label>
                 <button className="text-sm text-gray-500 hover:text-gray-700">
-                  Forgot Password?
+                  Mot de passe oublié ?
                 </button>
               </div>
 
@@ -97,11 +97,15 @@ const LoginSection: React.FC = () => {
                   onClick={handleSubmit}
                   className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-6 rounded font-medium transition-colors"
                 >
-                  Login
+                  Se connecter
                 </button>
-                <button className="text-sm text-gray-500 hover:text-gray-700">
-                  Signup?
-                </button>
+                <Link
+                      href="/register"
+                      className="flex items-center space-x-1 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    <User className="w-5 h-5" />
+                    <span className="hidden lg:block text-sm">Créer un compte</span>
+                  </Link>
               </div>
             </div>
           </div>

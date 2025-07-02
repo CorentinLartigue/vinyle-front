@@ -1,20 +1,20 @@
-import React from 'react';
-import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronDown, ChevronUp, X, Search } from 'lucide-react';
 import FilterListSearchable from '@components/shared/FilterListSearchable';
 import RangeFilter from '@components/shared/RangeFilters';
 
 type Filters = {
-    priceRange: [number, number];
+    priceRange?: [number, number];
     categories: string[];
     artists: string[];
-    releaseYear: [number, number];
+    releaseYear?: [number, number];
 };
 
 type FilterData = {
-    priceRange: [number, number];
+    priceRange?: [number, number];
     categories: string[];
     artists: string[];
-    yearRange: [number, number];
+    yearRange?: [number, number];
 };
 
 interface ProductFiltersProps {
@@ -35,6 +35,8 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
         artist: false,
         year: false,
     });
+
+    const [categorySearch, setCategorySearch] = useState('');
 
     const toggleSection = (section: 'price' | 'category' | 'artist' | 'year') => {
         setExpandedSections((prev) => ({
@@ -72,8 +74,13 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
         releaseYear: filterData.yearRange,
     });
 
-    const isYearFiltered = filters.releaseYear[0] !== filterData.yearRange[0] || filters.releaseYear[1] !== filterData.yearRange[1];
-    const isPriceFiltered = filters.priceRange[0] !== filterData.priceRange[0] || filters.priceRange[1] !== filterData.priceRange[1];
+    const isYearFiltered = filters.releaseYear && filterData.yearRange && (filters.releaseYear[0] !== filterData.yearRange[0] || filters.releaseYear[1] !== filterData.yearRange[1]);
+    const isPriceFiltered = filters.priceRange && filterData.priceRange && (filters.priceRange[0] !== filterData.priceRange[0] || filters.priceRange[1] !== filterData.priceRange[1]);
+
+    // Filtrer les catégories selon la recherche
+    const filteredCategories = filterData.categories.filter(cat =>
+        cat.toLowerCase().includes(categorySearch.toLowerCase())
+    );
 
     return (
         <div className="space-y-6">
@@ -104,13 +111,13 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                     ))}
                     {isYearFiltered && (
                         <span className="inline-flex items-center bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">
-                            {filters.releaseYear[0]} - {filters.releaseYear[1]}
+                            {filters.releaseYear && `${filters.releaseYear[0]} - ${filters.releaseYear[1]}`}
                             <button onClick={clearYear} className="ml-1 text-blue-500 hover:text-blue-700" title="Réinitialiser les années"><X className="w-3 h-3" /></button>
                         </span>
                     )}
                     {isPriceFiltered && (
                         <span className="inline-flex items-center bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-medium">
-                            {filters.priceRange[0]}€ - {filters.priceRange[1]}€
+                            {filters.priceRange && `${filters.priceRange[0]}€ - ${filters.priceRange[1]}€`}
                             <button onClick={clearPrice} className="ml-1 text-purple-500 hover:text-purple-700" title="Réinitialiser le prix"><X className="w-3 h-3" /></button>
                         </span>
                     )}
@@ -130,7 +137,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                         <button onClick={clearPrice} className="ml-2 text-gray-400 hover:text-orange-500" title="Réinitialiser le filtre prix"><X className="w-4 h-4" /></button>
                     )}
                 </div>
-                {expandedSections.price && (
+                {expandedSections.price && filterData.priceRange && (
                     <RangeFilter
                         minValue={filterData.priceRange[0]}
                         maxValue={filterData.priceRange[1]}
@@ -142,6 +149,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                     />
                 )}
             </section>
+
             <section>
                 <div className="flex justify-between items-center w-full">
                     <button
@@ -156,14 +164,52 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                     )}
                 </div>
                 {expandedSections.category && (
-                    <FilterListSearchable
-                        items={filterData.categories}
-                        selectedItems={filters.categories}
-                        onToggleItem={toggleCategory}
-                        placeholder="Rechercher une catégorie"
-                    />
+                    <div className="mt-4">
+                        {/* Barre de recherche pour les catégories */}
+                        <div className="relative mb-3">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Rechercher une catégorie..."
+                                value={categorySearch}
+                                onChange={(e) => setCategorySearch(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                            />
+                        </div>
+                        
+                        {/* Liste des catégories avec scroll */}
+                        <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg">
+                            {filteredCategories.length === 0 ? (
+                                <div className="p-3 text-center text-gray-500 text-sm">
+                                    Aucune catégorie trouvée
+                                </div>
+                            ) : (
+                                <div className="p-2">
+                                    {filteredCategories.map((category) => (
+                                        <label key={category} className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.categories.includes(category)}
+                                                onChange={() => toggleCategory(category)}
+                                                className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                                            />
+                                            <span className="text-sm text-gray-700">{category}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        
+                        {/* Compteur de catégories sélectionnées */}
+                        {filters.categories.length > 0 && (
+                            <div className="mt-2 text-xs text-gray-500">
+                                {filters.categories.length} catégorie{filters.categories.length > 1 ? 's' : ''} sélectionnée{filters.categories.length > 1 ? 's' : ''}
+                            </div>
+                        )}
+                    </div>
                 )}
             </section>
+
             <section>
                 <div className="flex justify-between items-center w-full">
                     <button
@@ -186,6 +232,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                     />
                 )}
             </section>
+
             <section>
                 <div className="flex justify-between items-center w-full">
                     <button
@@ -199,7 +246,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                         <button onClick={clearYear} className="ml-2 text-gray-400 hover:text-orange-500" title="Réinitialiser les années"><X className="w-4 h-4" /></button>
                     )}
                 </div>
-                {expandedSections.year && (
+                {expandedSections.year && filterData.yearRange && (
                     <RangeFilter
                         minValue={filterData.yearRange[0]}
                         maxValue={filterData.yearRange[1]}

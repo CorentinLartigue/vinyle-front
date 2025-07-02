@@ -1,7 +1,12 @@
 import React from 'react';
 import VinylRecord from '@components/Product/VinylRecord';
 
-const ProductGrid = ({ products, loading }) => {
+interface ProductGridProps {
+    products: any[];
+    loading: boolean;
+}
+
+const ProductGrid: React.FC<ProductGridProps> = ({ products, loading }) => {
     if (loading) {
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">

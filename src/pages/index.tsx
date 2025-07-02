@@ -5,9 +5,9 @@ import Cover from '@/assets/cover.png'
 import Dovinyl from '@/assets/dovinyl.png'
 
 import PopularCategories from '@/components/home/PopularCategories';
-import ListeningSection from '@/components/home/ListeningSection';
-import RecommendedVinyl from '@/components/home/RecommendedVinyl';
-import WeeklyNovelty from '@/components/home/WeeklyNovelty';
+import RecommendationProfile from '@/components/home/RecommendationProfile';
+import RecommendationPeople from '@/components/home/RecommendationPeople';
+import NewProductMonth from '@/components/home/NewProductMonth';
 
 
 const Index: React.FC = () => {
@@ -21,11 +21,11 @@ const Index: React.FC = () => {
 
             <PopularCategories />
 
-            <ListeningSection />
+            <RecommendationProfile />
 
-            <RecommendedVinyl />
+            <RecommendationPeople />
 
-            <WeeklyNovelty />
+            <NewProductMonth />
 
             {/* Why Choose Us */}
             <section className="py-16">

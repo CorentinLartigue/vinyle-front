@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
-import { useToast } from "../context/ToastProvider";
+import { useToast } from "@/context/ToastProvider";
+import { useProfile } from "@/context/ProfileProvider";
 
 const Success: React.FC = () => {
   const { showSuccess, showError } = useToast();
+  const profile = useProfile();
 
   useEffect(() => {
-    // Récupérer les produits du panier depuis le localStorage
     let cartItems: any[] = [];
     try {
       const stored = localStorage.getItem("cartItems");
@@ -22,12 +23,13 @@ const Success: React.FC = () => {
       showError("Aucun produit à enregistrer");
       return;
     }
-    // Construire la payload
+    
     const orderPayload = {
       orderDate: new Date().toISOString(),
       productIds: cartItems.map(item => item.id),
-      profileId: "demo-profile-id" // À remplacer par l'ID réel de l'utilisateur
+      profileId: profile!.id 
     };
+    
     // Envoyer la commande
     fetch("http://localhost:3000/api/orders", {
       method: "POST",
@@ -49,7 +51,7 @@ const Success: React.FC = () => {
       .catch(err => {
         showError("Erreur lors de l'enregistrement de la commande : " + err);
       });
-  }, [showSuccess, showError]);
+  }, [profile, showSuccess, showError]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-green-50">

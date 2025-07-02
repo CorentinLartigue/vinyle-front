@@ -1,21 +1,26 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
 
-const ProductSorting = ({ sortBy, setSortBy }) => {
+interface ProductSortingProps {
+    sortBy: string;
+    setSortBy: (value: string) => void;
+}
+
+const ProductSorting: React.FC<ProductSortingProps> = ({ sortBy, setSortBy }) => {
     const sortOptions = [
         { value: 'featured', label: 'En vedette' },
-        { value: 'newest', label: 'Plus récents' },
-        { value: 'oldest', label: 'Plus anciens' },
-        { value: 'price-low', label: 'Prix croissant' },
-        { value: 'price-high', label: 'Prix décroissant' },
-        { value: 'rating', label: 'Mieux notés' },
-        { value: 'name', label: 'Nom A-Z' }
+        { value: 'date-desc', label: 'Plus récents' },
+        { value: 'date-asc', label: 'Plus anciens' },
+        { value: 'price-asc', label: 'Prix croissant' },
+        { value: 'price-desc', label: 'Prix décroissant' },
+        { value: 'name-asc', label: 'Nom A-Z' },
+        { value: 'name-desc', label: 'Nom Z-A' }
     ];
 
     return (
         <div className="flex items-center space-x-2">
       <span className="text-sm text-gray-600 whitespace-nowrap">
-        Trier par:
+        Trier par :
       </span>
             <div className="relative">
                 <select

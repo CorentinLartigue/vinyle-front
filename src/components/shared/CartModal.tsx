@@ -3,20 +3,20 @@ import { X, Plus, Minus, ShoppingBag, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface CartItem {
-    id: number;
-    title: string;
-    artist: string;
+    id: string | number;
+    productName: string;
+    artistInfos?: Array<{ name: string; bio?: string }>;
     price: number;
     quantity: number;
-    image: string;
+    imagePath?: string;
 }
 
 interface CartModalProps {
     isOpen: boolean;
     onClose: () => void;
     cartItems: CartItem[];
-    onUpdateQuantity: (id: number, quantity: number) => void;
-    onRemoveItem: (id: number) => void;
+    onUpdateQuantity: (id: string | number, quantity: number) => void;
+    onRemoveItem: (id: string | number) => void;
 }
 
 const CartModal: React.FC<CartModalProps> = ({
@@ -44,7 +44,7 @@ const CartModal: React.FC<CartModalProps> = ({
         return cartItems.reduce((total, item) => total + item.quantity, 0);
     };
 
-    const handleQuantityChange = (id: number, newQuantity: number) => {
+    const handleQuantityChange = (id: string | number, newQuantity: number) => {
         if (newQuantity === 0) {
             onRemoveItem(id);
         } else {
@@ -89,65 +89,71 @@ const CartModal: React.FC<CartModalProps> = ({
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                {cartItems.map((item, index) => (
-                                    <div 
-                                        key={item.id} 
-                                        className={`flex items-center space-x-3 bg-gray-50 p-3 rounded-lg transform transition-all duration-300 ${
-                                            isOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
-                                        }`}
-                                        style={{ 
-                                            transitionDelay: isOpen ? `${200 + (index * 50)}ms` : '0ms'
-                                        }}
-                                    >
-                                        {/* Image */}
-                                        <div className="w-16 h-16 bg-gradient-to-br from-gray-800 to-black rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
-                                                <div className="w-3 h-3 bg-black rounded-full"></div>
+                                {cartItems.map((item, index) => {
+                                    const artistName = item.artistInfos && item.artistInfos.length > 0 
+                                        ? item.artistInfos[0].name 
+                                        : 'Artiste inconnu';
+                                    
+                                    return (
+                                        <div 
+                                            key={item.id} 
+                                            className={`flex items-center space-x-3 bg-gray-50 p-3 rounded-lg transform transition-all duration-300 ${
+                                                isOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                                            }`}
+                                            style={{ 
+                                                transitionDelay: isOpen ? `${200 + (index * 50)}ms` : '0ms'
+                                            }}
+                                        >
+                                            {/* Image */}
+                                            <div className="w-16 h-16 bg-gradient-to-br from-gray-800 to-black rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+                                                    <div className="w-3 h-3 bg-black rounded-full"></div>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        {/* Item Info */}
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="font-medium text-sm truncate">{item.title}</h3>
-                                            <p className="text-xs text-gray-600 truncate">{item.artist}</p>
-                                            <p className="text-sm font-semibold text-orange-500">
-                                                {(item.price * item.quantity).toFixed(2)}€
-                                            </p>
-                                        </div>
+                                            {/* Item Info */}
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="font-medium text-sm truncate">{item.productName}</h3>
+                                                <p className="text-xs text-gray-600 truncate">{artistName}</p>
+                                                <p className="text-sm font-semibold text-orange-500">
+                                                    {(item.price * item.quantity).toFixed(2)}€
+                                                </p>
+                                            </div>
 
-                                        {/* Quantity Controls */}
-                                        <div className="flex flex-col items-end space-y-2">
-                                            <button
-                                                onClick={() => onRemoveItem(item.id)}
-                                                className="p-1 hover:bg-red-100 rounded text-red-500 transition-colors"
-                                                title="Supprimer"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                            
-                                            <div className="flex items-center space-x-2">
+                                            {/* Quantity Controls */}
+                                            <div className="flex flex-col items-end space-y-2">
                                                 <button
-                                                    onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                                                    className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center transition-colors"
-                                                    disabled={item.quantity <= 1}
+                                                    onClick={() => onRemoveItem(item.id)}
+                                                    className="p-1 hover:bg-red-100 rounded text-red-500 transition-colors"
+                                                    title="Supprimer"
                                                 >
-                                                    <Minus className="w-3 h-3" />
+                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                                 
-                                                <span className="text-sm font-medium w-6 text-center">
-                                                    {item.quantity}
-                                                </span>
-                                                
-                                                <button
-                                                    onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                                                    className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center transition-colors"
-                                                >
-                                                    <Plus className="w-3 h-3" />
-                                                </button>
+                                                <div className="flex items-center space-x-2">
+                                                    <button
+                                                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                                                        className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center transition-colors"
+                                                        disabled={item.quantity <= 1}
+                                                    >
+                                                        <Minus className="w-3 h-3" />
+                                                    </button>
+                                                    
+                                                    <span className="text-sm font-medium w-6 text-center">
+                                                        {item.quantity}
+                                                    </span>
+                                                    
+                                                    <button
+                                                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                                                        className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center transition-colors"
+                                                    >
+                                                        <Plus className="w-3 h-3" />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
@@ -220,12 +226,14 @@ const CartModal: React.FC<CartModalProps> = ({
                                 >
                                     Voir le panier
                                 </Link>
-                                <button
-                                    onClick={onClose}
-                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-medium transition-colors"
-                                >
-                                    Continuer les achats
-                                </button>
+                                <Link href="/product">
+                                    <button
+                                        onClick={onClose}
+                                        className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-medium transition-colors"
+                                    >
+                                        Continuer les achats
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     )}
