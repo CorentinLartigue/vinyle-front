@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useToast } from '@/context/ToastProvider';
-import { useProfile } from '@/context/ProfileProvider';
+import { useAuth } from '@/context/AuthContext';
 
 interface Favorite {
     id: string;
@@ -14,7 +14,7 @@ export const useFavorites = () => {
     const [favorites, setFavorites] = useState<Favorite[]>([]);
     const [loading, setLoading] = useState(false);
     const { showSuccess, showError } = useToast();
-    const profile = useProfile();
+    const { user: profile } = useAuth();
     const router = useRouter();
 
     // Récupérer les favoris de l'utilisateur
@@ -69,9 +69,9 @@ export const useFavorites = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    targetType: 'product',
-                    targetId: String(productId),
-                    profileId: profile.id
+                    productId: String(productId),
+                    profileId: profile.id,
+                    isFavoris: true
                 })
             });
 
@@ -149,9 +149,9 @@ export const useFavorites = () => {
     };
 
     // Charger les favoris au montage du composant et quand le profil change
-    useEffect(() => {
-        fetchFavorites();
-    }, [profile?.id]);
+    // useEffect(() => {
+    //     fetchFavorites();
+    // }, [profile?.id]);
 
     return {
         favorites,

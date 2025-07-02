@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 interface CartItem {
     id: string | number;
@@ -29,6 +30,7 @@ const CART_STORAGE_KEY = 'dovinyl_cart';
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const { user } = useAuth();
 
     // Charger le panier depuis le localStorage au montage
     useEffect(() => {
@@ -46,11 +48,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Sauvegarder le panier dans le localStorage à chaque modification
     useEffect(() => {
         try {
-            localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+            if (user) {
+                localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+            } else {
+                localStorage.removeItem(CART_STORAGE_KEY);
+            }
         } catch (error) {
             console.error('Erreur lors de la sauvegarde du panier:', error);
         }
-    }, [cartItems]);
+    }, [cartItems, user]);
 
     const addToCart = useCallback((product: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
         setCartItems(prevItems => {

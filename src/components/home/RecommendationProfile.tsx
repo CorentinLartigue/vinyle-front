@@ -64,42 +64,42 @@ const RecommendationProfile: React.FC = () => {
                         ) : products.length === 0 ? (
                             <div className="text-center py-8 text-gray-500">Aucun produit disponible.</div>
                         ) : (
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                                 {products.map((product) => {
                                     const artistName = product.artistInfos && product.artistInfos.length > 0 
                                         ? product.artistInfos[0].name 
                                         : 'Artiste inconnu';
                                     
                                     return (
-                                        <div 
-                                            key={product.id} 
-                                            className="bg-white rounded-lg shadow-md overflow-hidden group hover:shadow-lg transition-shadow cursor-pointer"
-                                            onClick={() => handleProductClick(product.id)}
-                                        >
-                                            <div className="relative">
-                                                <div className="w-full h-32 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
-                                                    <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
-                                                        <div className="w-6 h-6 bg-black rounded-full"></div>
-                                                    </div>
-                                                </div>
-                                                <button 
-                                                    onClick={(e) => handleAddToFavorites(e, product.id)}
-                                                    className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                                                >
-                                                    <Heart className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                            <div className="p-4">
-                                                <h4 className="font-semibold text-sm mb-1 group-hover:text-orange-500 transition-colors">{product.productName}</h4>
-                                                <p className="text-xs text-gray-600 mb-2">{artistName}</p>
-                                                <div className="flex justify-between items-center">
-                                                    <span className="font-bold text-orange-500">{product.price}€</span>
-                                                </div>
+                                <div 
+                                    key={product.id} 
+                                    className="bg-white rounded-lg shadow-md overflow-hidden group hover:shadow-lg transition-shadow cursor-pointer"
+                                    onClick={() => handleProductClick(product.id)}
+                                >
+                                    <div className="relative">
+                                        <div className="w-full h-32 bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
+                                            <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+                                                <div className="w-6 h-6 bg-black rounded-full"></div>
                                             </div>
                                         </div>
+                                        <button 
+                                            onClick={(e) => handleAddToFavorites(e, product.id)}
+                                            className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                        >
+                                            <Heart className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                    <div className="p-4">
+                                                <h4 className="font-semibold text-sm mb-1 group-hover:text-orange-500 transition-colors">{product.productName}</h4>
+                                                <p className="text-xs text-gray-600 mb-2">{artistName}</p>
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-bold text-orange-500">{product.price}€</span>
+                                        </div>
+                                    </div>
+                                </div>
                                     );
                                 })}
-                            </div>
+                        </div>
                         )}
                     </div>
                 </div>

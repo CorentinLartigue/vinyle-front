@@ -315,7 +315,7 @@ const ProductList = () => {
                   {selectedCategory
                       ? `${filteredProducts.length} produits dans "${selectedCategory.categoryName}"`
                       : `${filteredProducts.length} produits au total`}
-                  </span>
+                </span>
                 </div>
                 <ProductSorting sortBy={sortBy} setSortBy={setSortBy} />
               </div>
@@ -325,37 +325,37 @@ const ProductList = () => {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex justify-center mt-8">
+                  <div className="flex justify-center mt-8">
                   <div className="flex space-x-2">
-                    <button
-                      onClick={() => setCurrentPage(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Précédent
-                    </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                       <button
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Précédent
+                      </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                          <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
                         className={`px-3 py-2 text-sm border rounded-md ${
                           currentPage === page
                             ? 'bg-green-500 text-white border-green-500'
                             : 'border-gray-300 hover:bg-gray-50'
-                        }`}
-                      >
+                              }`}
+                          >
                         {page}
-                      </button>
-                    ))}
-                    <button
+                          </button>
+                      ))}
+                      <button
                       onClick={() => setCurrentPage(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Suivant
-                    </button>
+                          disabled={currentPage === totalPages}
+                          className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Suivant
+                      </button>
+                    </div>
                   </div>
-                </div>
               )}
             </main>
           </div>

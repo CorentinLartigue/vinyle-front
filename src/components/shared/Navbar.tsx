@@ -6,6 +6,7 @@ import { ShoppingCart, Search, User, Heart, ChevronDown, LogOut, Menu, X } from 
 import Gramophone from '@/assets/gramophone.png'
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartProvider';
 
 interface NavbarProps {
     cartCount: number;
@@ -16,6 +17,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
     const { user, isAuthenticated, logout } = useAuth();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { openCart } = useCart();
 
     const handleLogout = () => {
         logout();
@@ -180,7 +182,11 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                                 </button>
                             )}
 
-                            <Link href="/cart" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors relative">
+                            <button
+                                onClick={openCart}
+                                className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors relative"
+                                aria-label="Ouvrir le panier"
+                            >
                                 <ShoppingCart className="w-5 h-5" />
                                 <span className="hidden lg:block text-sm">Panier</span>
                                 {cartCount > 0 && (
@@ -188,7 +194,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                                         {cartCount}
                                     </span>
                                 )}
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -317,19 +323,19 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                                 </button>
                             )}
 
-                            <Link
-                                href="/cart"
-                                className="flex items-center space-x-2 py-2 px-4 text-gray-700 hover:bg-gray-100 rounded relative"
-                                onClick={() => setIsMobileMenuOpen(false)}
+                            <button
+                                onClick={openCart}
+                                className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors relative"
+                                aria-label="Ouvrir le panier"
                             >
                                 <ShoppingCart className="w-5 h-5" />
-                                <span>Panier</span>
+                                <span className="hidden lg:block text-sm">Panier</span>
                                 {cartCount > 0 && (
                                     <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                                         {cartCount}
                                     </span>
                                 )}
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 )}

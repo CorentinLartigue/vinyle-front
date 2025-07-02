@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 import { useToast } from "@/context/ToastProvider";
-import { useProfile } from "@/context/ProfileProvider";
+import { useAuth } from "@/context/AuthContext";
 
 const Success: React.FC = () => {
   const { showSuccess, showError } = useToast();
-  const profile = useProfile();
+  const { user: profile } = useAuth();
 
   useEffect(() => {
     let cartItems: any[] = [];

@@ -241,11 +241,33 @@ const Cart: React.FC<CartProps> = ({
                                 </div>
 
                                 {/* Checkout Button */}
-                                <button
-                                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-lg transition-colors mt-6 shadow-lg hover:shadow-xl"
-                                    onClick={() => {
-                                        showSuccess('Fonctionnalité de paiement à venir !');
-                                    }}
+                                <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-4 px-4 rounded-xl font-bold mt-6 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                        onClick={async () => {
+                                            try {
+                                                const response = await fetch('http://localhost:3000/api/stripe/checkout-session', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'accept': '*/*',
+                                                    },
+                                                    body: JSON.stringify({
+                                                        amount: Math.round(finalTotal * 100),
+                                                        currency: 'eur',
+                                                        successUrl: 'http://localhost:3700/success',
+                                                        cancelUrl: 'http://localhost:3700/cancel',
+                                                    }),
+                                                });
+                                                const data = await response.json();
+                                                if (data.url) {
+                                                    showSuccess('Redirection vers le paiement Stripe...');
+                                                    window.location.href = data.url;
+                                                } else {
+                                                    showError('Erreur: URL de paiement non reçue.\nRéponse complète: ' + JSON.stringify(data, null, 2));
+                                                }
+                                            } catch (error) {
+                                                showError('Erreur lors de la redirection vers Stripe: ' + error);
+                                            }
+                                        }}
                                 >
                                     Procéder au paiement
                                 </button>

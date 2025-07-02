@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Cart from "@/components/Cart";
 import { useCart } from "@/context/CartProvider";
-import { useProfile } from "@/context/ProfileProvider";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 
 const CartPage: React.FC = () => {
@@ -13,16 +13,16 @@ const CartPage: React.FC = () => {
         getCartTotal
     } = useCart();
 
-    const profile = useProfile();
+    const { user } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        if (profile === null) {
+        if (user === null) {
             router.replace("/login");
         }
-    }, [profile, router]);
+    }, [user, router]);
 
-    if (profile === null) {
+    if (user === null) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">

@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import Profil from "@components/Profil";
-import { useProfile } from "@/context/ProfileProvider";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 
 const Index: React.FC = () => {
-    const profile = useProfile();
+    const { user: profile } = useAuth();
     const router = useRouter();
 
    /* useEffect(() => {

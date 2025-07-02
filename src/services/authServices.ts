@@ -72,7 +72,7 @@ class AuthService {
         success: true,
         message: data.message || 'Opération réussie',
         data: data.data,
-        token: data.token,
+        token: data.token || data.access_token,
       };
     } catch (error) {
       return {
@@ -107,7 +107,37 @@ class AuthService {
   }
 
   async getProfile(): Promise<AuthResponse> {
-    return this.makeRequest('profile', 'GET');
+    try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      const token = this.getToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const response = await fetch(`${API_BASE_URL}/api/profiles/me`, {
+        method: 'GET',
+        headers,
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        if (response.status === 401) {
+          this.removeToken();
+        }
+        throw new Error(data.message || 'Une erreur est survenue');
+      }
+      return {
+        success: true,
+        message: data.message || 'Opération réussie',
+        data: data,
+        token: undefined,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Une erreur est survenue',
+      };
+    }
   }
 
   async refreshToken(): Promise<AuthResponse> {

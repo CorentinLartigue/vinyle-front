@@ -5,6 +5,7 @@ import { Heart, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/context/ToastProvider';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useCart } from '@/context/CartProvider';
+import { useAuth } from '@/context/AuthContext';
 
 interface Artist {
     id: string;
@@ -40,6 +41,7 @@ const ProductDetailPage = () => {
   const { showError, showSuccess } = useToast();
   const { addToFavorites, isProductFavorite } = useFavorites();
   const { addToCart } = useCart();
+  const { user } = useAuth();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [popularProducts, setPopularProducts] = useState<Product[]>([]);
@@ -97,7 +99,11 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     if (!product) return;
-    
+    if (!user) {
+      showError('Vous devez être connecté pour ajouter au panier.');
+      router.push('/login');
+      return;
+    }
     setAddingToCart(true);
     
     // Simuler un délai pour l'UX
@@ -149,7 +155,6 @@ const ProductDetailPage = () => {
     return <div className="p-8 text-center text-gray-500">Produit introuvable.</div>;
   }
 
-  // Extraire les informations du produit
   const releaseYear = product.date ? new Date(product.date).getFullYear() : '';
   const artistName = product.artists && product.artists.length > 0 ? product.artists[0].name : 'Artiste inconnu';
   const categoryName = product.categories && product.categories.length > 0 ? product.categories[0].categoryName : 'Catégorie';
