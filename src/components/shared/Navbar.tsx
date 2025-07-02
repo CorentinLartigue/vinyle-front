@@ -7,16 +7,12 @@ import Gramophone from '@/assets/gramophone.png'
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 
-import CartModal from '@/components/shared/CartModal';
-import { useCart } from '@/hooks/useCart';
-
 interface NavbarProps {
     cartCount: number;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
     const router = useRouter();
-    const profile = useProfile();
     const { user, isAuthenticated, logout } = useAuth();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,7 +24,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
     };
 
     const handleWishlistClick = (e: React.MouseEvent) => {
-        if (!profile) {
+        if (!isAuthenticated) {
             e.preventDefault();
             router.push('/login');
         }
@@ -62,15 +58,13 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                             </Link>
                         </div>
                         {isAuthenticated && (
-                            {profile && (
-                                <div className="relative group">
-                                    <Link href="/account" className={`transition-colors flex items-center font-medium ${router.pathname === '/account' ? 'text-orange-500' : 'text-gray-700 hover:text-orange-500'}`}>
-                                        Mon Compte
-                                        <ChevronDown className="w-4 h-4 ml-1" />
-                                    </Link>
-                                </div>
+                            <div className="relative group">
+                                <Link href="/account" className={`transition-colors flex items-center font-medium ${router.pathname === '/account' ? 'text-orange-500' : 'text-gray-700 hover:text-orange-500'}`}>
+                                    Mon Compte
+                                    <ChevronDown className="w-4 h-4 ml-1" />
+                                </Link>
+                            </div>
                         )}
-                            )}
                     </div>
                 </nav>
 
@@ -115,14 +109,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
 
                         {/* Actions desktop */}
                         <div className="hidden md:flex items-center space-x-6">
-                            {!isAuthenticated ? (
-                                {profile ? (
-                                <>
-                                    <Link href="/account" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
-                                            <User className="w-5 h-5" />
-                                            <span className="hidden lg:block text-sm">{profile.firstName}</span>
-                                        </Link>
-                            ) : (
+                            {isAuthenticated ? (
                                 <div className="relative">
                                     <button
                                         onClick={() => setShowUserMenu(!showUserMenu)}
@@ -171,27 +158,26 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                                         </div>
                                     )}
                                 </div>
+                            ) : (
+                                <Link href="/login" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
+                                    <User className="w-5 h-5" />
+                                    <span className="hidden lg:block text-sm">Connexion</span>
+                                </Link>
                             )}
 
-                                    <Link href="/wishlist" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
-                                        <Heart className="w-5 h-5" />
-                                        <span className="hidden lg:block text-sm">Favoris</span>
-                                    </Link>
-                                </>
+                            {isAuthenticated ? (
+                                <Link href="/wishlist" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
+                                    <Heart className="w-5 h-5" />
+                                    <span className="hidden lg:block text-sm">Favoris</span>
+                                </Link>
                             ) : (
-                                <>
-                                    <Link href="/login" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
-                                        <User className="w-5 h-5" />
-                                        <span className="hidden lg:block text-sm">Connexion</span>
-                                    </Link>
-                                    <button 
-                                        onClick={handleWishlistClick}
-                                        className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors"
-                                    >
-                                        <Heart className="w-5 h-5" />
-                                        <span className="hidden lg:block text-sm">Favoris</span>
-                                    </button>
-                                </>
+                                <button 
+                                    onClick={handleWishlistClick}
+                                    className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors"
+                                >
+                                    <Heart className="w-5 h-5" />
+                                    <span className="hidden lg:block text-sm">Favoris</span>
+                                </button>
                             )}
 
                             <Link href="/cart" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors relative">
@@ -267,26 +253,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
 
                         {/* Actions utilisateur mobile */}
                         <div className="border-t border-gray-200 pt-4 space-y-2">
-                            {!isAuthenticated ? (
-                                <>
-                                    <Link
-                                        href="/login"
-                                        className="flex items-center space-x-2 py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        <User className="w-5 h-5" />
-                                        <span>Se connecter</span>
-                                    </Link>
-                                    <Link
-                                        href="/register"
-                                        className="flex items-center space-x-2 py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        <User className="w-5 h-5" />
-                                        <span>S'inscrire</span>
-                                    </Link>
-                                </>
-                            ) : (
+                            {isAuthenticated ? (
                                 <>
                                     <div className="py-2 px-4 text-sm text-gray-500 border-b border-gray-200">
                                         Connecté en tant que {user?.firstName || user?.email?.split('@')[0]}
@@ -310,16 +277,45 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                                         <span>Se déconnecter</span>
                                     </button>
                                 </>
+                            ) : (
+                                <>
+                                    <Link
+                                        href="/login"
+                                        className="flex items-center space-x-2 py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <User className="w-5 h-5" />
+                                        <span>Se connecter</span>
+                                    </Link>
+                                    <Link
+                                        href="/register"
+                                        className="flex items-center space-x-2 py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <User className="w-5 h-5" />
+                                        <span>S'inscrire</span>
+                                    </Link>
+                                </>
                             )}
 
-                            <Link
-                                href="/wishlist"
-                                className="flex items-center space-x-2 py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                <Heart className="w-5 h-5" />
-                                <span>Favoris</span>
-                            </Link>
+                            {isAuthenticated ? (
+                                <Link
+                                    href="/wishlist"
+                                    className="flex items-center space-x-2 py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    <Heart className="w-5 h-5" />
+                                    <span>Favoris</span>
+                                </Link>
+                            ) : (
+                                <button
+                                    onClick={handleWishlistClick}
+                                    className="flex items-center space-x-2 py-2 px-4 text-gray-700 hover:bg-gray-100 rounded w-full text-left"
+                                >
+                                    <Heart className="w-5 h-5" />
+                                    <span>Favoris</span>
+                                </button>
+                            )}
 
                             <Link
                                 href="/cart"
