@@ -112,7 +112,7 @@ const Profil: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="py-16 bg-gradient-to-r from-gray-800 to-gray-900 text-white">
+      <div className="bg-emerald-500 text-white">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-2xl">
@@ -120,7 +120,7 @@ const Profil: React.FC = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold">Bonjour, {userProfile.firstName} !</h1>
-              <p className="text-gray-100">Gérez votre compte DoVinyl</p>
+              <p className="text-emerald-100">Gérez votre compte DoVinyl</p>
             </div>
           </div>
         </div>
@@ -131,7 +131,7 @@ const Profil: React.FC = () => {
           {/* Navigation verticale à gauche */}
           <div className="w-72 flex-shrink-0">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden sticky top-8">
-              <div className="p-4 bg-gradient-to-r from-orange-500 to-red-500 text-white">
+              <div className="p-4 bg-emerald-500 text-white">
                 <h3 className="font-semibold text-lg">Navigation</h3>
               </div>
               <div className="p-2">
@@ -143,8 +143,8 @@ const Profil: React.FC = () => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`w-full p-4 rounded-lg font-medium transition-all duration-200 mb-2 ${
                         activeTab === tab.id
-                          ? 'bg-orange-500 text-white shadow-md'
-                          : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600'
+                          ? 'bg-emerald-500 text-white shadow-md'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-emerald-600'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
@@ -152,7 +152,7 @@ const Profil: React.FC = () => {
                         <span className="flex-1 text-left">{tab.label}</span>
                         {tab.count !== undefined && (
                           <span className={`px-2 py-1 rounded-full text-xs min-w-[20px] ${
-                            activeTab === tab.id ? 'bg-white/20' : 'bg-orange-100 text-orange-600'
+                            activeTab === tab.id ? 'bg-white/20' : 'bg-emerald-100 text-emerald-600'
                           }`}>
                             {tab.count}
                           </span>
@@ -184,19 +184,19 @@ const Profil: React.FC = () => {
                 ) : (
                   <div className="grid gap-4">
                     {wishlistItems.map((item) => (
-                      <div key={item.id} className="bg-white border border-orange-200 rounded-lg p-4 flex items-center space-x-4 hover:shadow-md transition-shadow">
-                        <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center text-2xl text-white">
+                      <div key={item.id} className="bg-white border border-emerald-200 rounded-lg p-4 flex items-center space-x-4">
+                        <div className="w-16 h-16 bg-emerald-500 rounded-lg flex items-center justify-center text-2xl text-white">
                           {item.image}
                         </div>
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-800">{item.title}</h3>
                           <p className="text-gray-600">{item.artist}</p>
-                          <span className="inline-block px-2 py-1 bg-orange-100 text-orange-600 text-xs rounded-full">{item.genre}</span>
+                          <span className="inline-block px-2 py-1 bg-emerald-100 text-emerald-600 text-xs rounded-full">{item.genre}</span>
                         </div>
                         <div className="text-right">
-                          <p className="text-lg font-bold text-orange-600">{item.price}€</p>
+                          <p className="text-lg font-bold text-emerald-600">{item.price}€</p>
                           <div className="flex space-x-2 mt-2">
-                            <button className="px-3 py-1 bg-orange-500 text-white rounded-md text-sm hover:bg-orange-600 transition-colors">
+                            <button className="px-3 py-1 bg-emerald-500 text-white rounded-md text-sm hover:bg-emerald-600 transition-colors">
                               Ajouter au panier
                             </button>
                             <button className="p-1 text-gray-400 hover:text-red-500 transition-colors">
@@ -227,7 +227,7 @@ const Profil: React.FC = () => {
                 ) : (
                   <div className="space-y-6">
                     {orders.map((order) => (
-                      <div key={order.id} className="bg-white border border-orange-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                      <div key={order.id} className="bg-white border border-emerald-200 rounded-lg p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div>
                             <h3 className="font-semibold text-gray-800">Commande #{order.id}</h3>
@@ -237,7 +237,7 @@ const Profil: React.FC = () => {
                             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
                               {order.status}
                             </span>
-                            <p className="text-lg font-bold text-orange-600 mt-1">{order.total.toFixed(2)}€</p>
+                            <p className="text-lg font-bold text-emerald-600 mt-1">{order.total.toFixed(2)}€</p>
                           </div>
                         </div>
                         
@@ -248,18 +248,18 @@ const Profil: React.FC = () => {
                                 <span className="font-medium">{item.title}</span>
                                 <span className="text-gray-600 ml-2">- {item.artist}</span>
                               </div>
-                              <span className="text-orange-600 font-medium">{item.price}€</span>
+                              <span className="text-emerald-600 font-medium">{item.price}€</span>
                             </div>
                           ))}
                         </div>
                         
                         <div className="flex space-x-3 mt-4">
-                          <button className="flex items-center space-x-1 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
+                          <button className="flex items-center space-x-1 px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition-colors">
                             <Eye size={16} />
                             <span>Voir détails</span>
                           </button>
                           {order.status === 'Livré' && (
-                            <button className="px-4 py-2 border border-orange-300 text-orange-600 rounded-md hover:bg-orange-50 transition-colors">
+                            <button className="px-4 py-2 border border-emerald-300 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors">
                               Racheter
                             </button>
                           )}
@@ -276,15 +276,15 @@ const Profil: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-800">Mon Profil</h2>
-                  <button className="flex items-center space-x-2 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
+                  <button className="flex items-center space-x-2 px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition-colors">
                     <Edit2 size={16} />
                     <span>Modifier</span>
                   </button>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-white border border-orange-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <h3 className="text-lg font-semibold mb-4 text-orange-800">Informations personnelles</h3>
+                  <div className="bg-white border border-emerald-200 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold mb-4 text-emerald-800">Informations personnelles</h3>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-600 mb-1">Prénom</label>
@@ -305,8 +305,8 @@ const Profil: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-orange-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <h3 className="text-lg font-semibold mb-4 text-orange-800">Adresse de livraison</h3>
+                  <div className="bg-white border border-emerald-200 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold mb-4 text-emerald-800">Adresse de livraison</h3>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-600 mb-1">Adresse</label>
@@ -328,13 +328,13 @@ const Profil: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 bg-white border border-orange-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                  <h3 className="text-lg font-semibold mb-4 text-orange-800">Sécurité</h3>
+                <div className="mt-6 bg-white border border-emerald-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold mb-4 text-emerald-800">Sécurité</h3>
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <button className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
+                    <button className="px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition-colors">
                       Changer le mot de passe
                     </button>
-                    <button className="px-4 py-2 border border-orange-300 text-orange-600 rounded-md hover:bg-orange-50 transition-colors">
+                    <button className="px-4 py-2 border border-emerald-300 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors">
                       Supprimer le compte
                     </button>
                   </div>
