@@ -8,6 +8,7 @@ type Filters = {
     categories: string[];
     artists: string[];
     releaseYear?: [number, number];
+    productName?: string;
 };
 
 type FilterData = {
@@ -32,8 +33,8 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
     }>({
         price: true,
         category: true,
-        artist: false,
-        year: false,
+        artist: true,
+        year: true,
     });
 
     const [categorySearch, setCategorySearch] = useState('');
@@ -67,12 +68,16 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
     const clearArtist = () => setFilters((prev) => ({ ...prev, artists: [] }));
     const clearYear = () => setFilters((prev) => ({ ...prev, releaseYear: filterData.yearRange }));
     const clearPrice = () => setFilters((prev) => ({ ...prev, priceRange: filterData.priceRange }));
-    const clearAll = () => setFilters({
-        priceRange: filterData.priceRange,
-        categories: [],
-        artists: [],
-        releaseYear: filterData.yearRange,
-    });
+    const clearAll = () => {
+        localStorage.removeItem('productFilters');
+        setFilters({
+            priceRange: filterData.priceRange,
+            categories: [],
+            artists: [],
+            releaseYear: filterData.yearRange,
+            productName: '',
+        });
+    };
 
     const isYearFiltered = filters.releaseYear && filterData.yearRange && (filters.releaseYear[0] !== filterData.yearRange[0] || filters.releaseYear[1] !== filterData.yearRange[1]);
     const isPriceFiltered = filters.priceRange && filterData.priceRange && (filters.priceRange[0] !== filterData.priceRange[0] || filters.priceRange[1] !== filterData.priceRange[1]);
@@ -95,7 +100,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
             </div>
 
             {/* Filtres actifs */}
-            {(filters.categories.length > 0 || filters.artists.length > 0 || isYearFiltered || isPriceFiltered) && (
+            {(filters.categories.length > 0 || filters.artists.length > 0 || isYearFiltered || isPriceFiltered || (filters.productName && filters.productName.trim() !== '')) && (
                 <div className="flex flex-wrap gap-2 mb-2">
                     {filters.categories.map((cat) => (
                         <span key={cat} className="inline-flex items-center bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs font-medium">
@@ -109,16 +114,22 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                             <button onClick={() => toggleArtist(artist)} className="ml-1 text-green-500 hover:text-green-700" title="Retirer ce filtre"><X className="w-3 h-3" /></button>
                         </span>
                     ))}
-                    {isYearFiltered && (
+                    {filters.productName && filters.productName.trim() !== '' && (
                         <span className="inline-flex items-center bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">
+                            {filters.productName}
+                            <button onClick={() => setFilters((prev) => ({ ...prev, productName: '' }))} className="ml-1 text-blue-500 hover:text-blue-700" title="Retirer ce filtre"><X className="w-3 h-3" /></button>
+                        </span>
+                    )}
+                    {isYearFiltered && (
+                        <span className="inline-flex items-center bg-violet-100 text-violet-700 px-2 py-1 rounded text-xs font-medium">
                             {filters.releaseYear && `${filters.releaseYear[0]} - ${filters.releaseYear[1]}`}
-                            <button onClick={clearYear} className="ml-1 text-blue-500 hover:text-blue-700" title="Réinitialiser les années"><X className="w-3 h-3" /></button>
+                            <button onClick={clearYear} className="ml-1 text-violet-500 hover:text-violet-700" title="Réinitialiser les années"><X className="w-3 h-3" /></button>
                         </span>
                     )}
                     {isPriceFiltered && (
-                        <span className="inline-flex items-center bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-medium">
+                        <span className="inline-flex items-center bg-pink-100 text-pink-700 px-2 py-1 rounded text-xs font-medium">
                             {filters.priceRange && `${filters.priceRange[0]}€ - ${filters.priceRange[1]}€`}
-                            <button onClick={clearPrice} className="ml-1 text-purple-500 hover:text-purple-700" title="Réinitialiser le prix"><X className="w-3 h-3" /></button>
+                            <button onClick={clearPrice} className="ml-1 text-pink-500 hover:text-pink-700" title="Réinitialiser le prix"><X className="w-3 h-3" /></button>
                         </span>
                     )}
                 </div>
@@ -141,11 +152,13 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                     <RangeFilter
                         minValue={filterData.priceRange[0]}
                         maxValue={filterData.priceRange[1]}
-                        range={filters.priceRange}
+                        range={filters.priceRange ?? filterData.priceRange}
                         unit="€"
                         onChangeRange={(newRange: [number, number]) =>
                             setFilters((prev) => ({ ...prev, priceRange: newRange }))
                         }
+                        trackColor="bg-orange-400"
+                        thumbColor="bg-orange-500 border-orange-500"
                     />
                 )}
             </section>
@@ -191,7 +204,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                                                 type="checkbox"
                                                 checked={filters.categories.includes(category)}
                                                 onChange={() => toggleCategory(category)}
-                                                className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                                                className="w-4 h-4 text-orange-500 border-orange-400 focus:ring-2 focus:ring-orange-500 rounded"
                                             />
                                             <span className="text-sm text-gray-700">{category}</span>
                                         </label>
@@ -200,7 +213,6 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                             )}
                         </div>
                         
-                        {/* Compteur de catégories sélectionnées */}
                         {filters.categories.length > 0 && (
                             <div className="mt-2 text-xs text-gray-500">
                                 {filters.categories.length} catégorie{filters.categories.length > 1 ? 's' : ''} sélectionnée{filters.categories.length > 1 ? 's' : ''}
@@ -250,7 +262,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, setFilters, fi
                     <RangeFilter
                         minValue={filterData.yearRange[0]}
                         maxValue={filterData.yearRange[1]}
-                        range={filters.releaseYear}
+                        range={filters.releaseYear ?? filterData.yearRange}
                         onChangeRange={(newRange: [number, number]) =>
                             setFilters((prev) => ({ ...prev, releaseYear: newRange }))
                         }

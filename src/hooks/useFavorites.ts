@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useToast } from '@/context/ToastProvider';
 import { useAuth } from '@/context/AuthContext';
@@ -10,6 +10,12 @@ interface Favorite {
     profileId: string;
 }
 
+interface ProductFavoris {
+    id: string;
+    isFavoris: boolean;
+    favorisId?: string;
+}
+
 export const useFavorites = () => {
     const [favorites, setFavorites] = useState<Favorite[]>([]);
     const [loading, setLoading] = useState(false);
@@ -17,51 +23,92 @@ export const useFavorites = () => {
     const { user: profile } = useAuth();
     const router = useRouter();
 
-    // Récupérer les favoris de l'utilisateur
+    // Nouvelle méthode centralisée pour les carrousels
+    const toggleProductFavoris = async (
+        product: { id: string; isFavoris: boolean; favorisId?: string },
+        updateProductCallback: (newFavoris: { isFavoris: boolean; favorisId?: string }) => void
+    ) => {
+        if (!profile?.id) {
+            showError('Vous devez être connecté pour gérer les favoris');
+            router.push('/login');
+            return;
+        }
+        setLoading(true);
+        try {
+            if (product.isFavoris) {
+                // DELETE
+                console.log(product.favorisId);
+                await fetch(`http://localhost:3000/api/favoris/${product.favorisId}`, {
+                    method: 'DELETE',
+                    headers: { 'accept': '*/*' },
+                });
+                updateProductCallback({ isFavoris: false, favorisId: undefined });
+                showSuccess('Retiré des favoris');
+            } else {
+                // POST
+                const res = await fetch('http://localhost:3000/api/favoris', {
+                    method: 'POST',
+                    headers: {
+                        'accept': '*/*',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        productId: product.id,
+                        profileId: profile.id,
+                        isFavoris: true,
+                    }),
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    updateProductCallback({ isFavoris: true, favorisId: data.id || data.favorisId });
+                    showSuccess('Ajouté aux favoris');
+                } else {
+                    showError('Erreur lors de l\'ajout aux favoris');
+                }
+            }
+        } catch (e) {
+            showError('Erreur lors de la gestion du favori');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // --- Ancienne logique globale (pour compatibilité) ---
     const fetchFavorites = async () => {
         if (!profile?.id) {
             setFavorites([]);
             return;
         }
-
         try {
             setLoading(true);
             const response = await fetch(`http://localhost:3000/api/favoris/${profile.id}`, {
                 headers: { 'accept': '*/*' }
             });
-            
             if (!response.ok) {
                 throw new Error('Erreur lors de la récupération des favoris');
             }
-            
             const data = await response.json();
             setFavorites(data);
         } catch (error) {
-            console.error('Erreur lors de la récupération des favoris:', error);
-            showError('Erreur lors de la récupération des favoris');
             setFavorites([]);
         } finally {
             setLoading(false);
         }
     };
 
-    // Vérifier si un produit est en favoris
     const isProductFavorite = (productId: string | number): boolean => {
         const id = String(productId);
         return favorites.some(fav => fav.targetType === 'product' && fav.targetId === id);
     };
 
-    // Ajouter un produit aux favoris
     const addToFavorites = async (productId: string | number) => {
         if (!profile?.id) {
             showError('Vous devez être connecté pour ajouter aux favoris');
             router.push('/login');
             return;
         }
-
         try {
             setLoading(true);
-            
             const response = await fetch('http://localhost:3000/api/favoris', {
                 method: 'POST',
                 headers: {
@@ -74,33 +121,26 @@ export const useFavorites = () => {
                     isFavoris: true
                 })
             });
-
             if (!response.ok) {
                 throw new Error('Erreur lors de l\'ajout aux favoris');
             }
-
-            // Récupérer les favoris mis à jour depuis le serveur
             await fetchFavorites();
             showSuccess('Produit ajouté aux favoris');
         } catch (error) {
-            console.error('Erreur lors de l\'ajout aux favoris:', error);
             showError('Erreur lors de l\'ajout aux favoris');
         } finally {
             setLoading(false);
         }
     };
 
-    // Supprimer un produit des favoris
     const removeFromFavorites = async (productId: string | number) => {
         if (!profile?.id) {
             showError('Vous devez être connecté pour retirer des favoris');
             router.push('/login');
             return;
         }
-
         try {
             setLoading(true);
-            
             const response = await fetch('http://localhost:3000/api/favoris', {
                 method: 'DELETE',
                 headers: {
@@ -113,23 +153,18 @@ export const useFavorites = () => {
                     profileId: profile.id
                 })
             });
-
             if (!response.ok) {
                 throw new Error('Erreur lors de la suppression des favoris');
             }
-
-            // Récupérer les favoris mis à jour depuis le serveur
             await fetchFavorites();
             showSuccess('Produit retiré des favoris');
         } catch (error) {
-            console.error('Erreur lors de la suppression des favoris:', error);
             showError('Erreur lors de la suppression des favoris');
         } finally {
             setLoading(false);
         }
     };
 
-    // Toggle favoris (ajouter/supprimer)
     const toggleFavorite = async (productId: string | number) => {
         if (isProductFavorite(productId)) {
             await removeFromFavorites(productId);
@@ -138,20 +173,12 @@ export const useFavorites = () => {
         }
     };
 
-    // Fonction handleAddToFavorites pour compatibilité avec les composants existants
     const handleAddToFavorites = async (e: React.MouseEvent, productId: string | number) => {
         e.preventDefault();
         e.stopPropagation();
-        
-        if (loading) return; // Éviter les clics multiples pendant le chargement
-        
+        if (loading) return;
         await addToFavorites(productId);
     };
-
-    // Charger les favoris au montage du composant et quand le profil change
-    // useEffect(() => {
-    //     fetchFavorites();
-    // }, [profile?.id]);
 
     return {
         favorites,
@@ -161,6 +188,9 @@ export const useFavorites = () => {
         removeFromFavorites,
         toggleFavorite,
         handleAddToFavorites,
-        fetchFavorites
+        fetchFavorites,
+        toggleProductFavoris, // nouvelle méthode centralisée
+        showSuccess,
+        showError
     };
 }; 
