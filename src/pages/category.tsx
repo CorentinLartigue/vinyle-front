@@ -106,6 +106,15 @@ const Categories: React.FC = () => {
     const handleCategoryClick = (category: Category) => {
         // Stocker la catégorie sélectionnée dans le sessionStorage
         sessionStorage.setItem('selectedCategory', category.categoryName);
+        // Réinitialiser les filtres dans le localStorage pour ne garder que la catégorie
+        const newFilters = {
+            priceRange: undefined,
+            categories: [category.categoryName],
+            artists: [],
+            releaseYear: undefined,
+            productName: '',
+        };
+        localStorage.setItem('productFilters', JSON.stringify(newFilters));
         router.push('/product');
     };
 

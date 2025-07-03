@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import ProductGrid from '@components/Product/ProductGrid';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/context/ToastProvider';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useCart } from '@/context/CartProvider';
 import { useAuth } from '@/context/AuthContext';
+import RecommendationPeople from '@/components/home/RecommendationPeople';
 
 interface Artist {
     id: string;
@@ -28,6 +28,9 @@ interface Product {
     description: string;
     artists: Artist[];
     categories: Category[];
+    isFavoris?: boolean;
+    favorisId?: string;
+    imagePath: string;
 }
 
 const TABS = [
@@ -39,31 +42,54 @@ const ProductDetailPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { showError, showSuccess } = useToast();
-  const { addToFavorites, isProductFavorite } = useFavorites();
+  const { toggleProductFavoris, loading: loadingFav } = useFavorites();
   const { addToCart } = useCart();
   const { user } = useAuth();
   
   const [product, setProduct] = useState<Product | null>(null);
-  const [popularProducts, setPopularProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [popularLoading, setPopularLoading] = useState(true);
   const [tab, setTab] = useState('description');
   const [qty, setQty] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [localFavoris, setLocalFavoris] = useState<{
+    isFavoris: boolean;
+    favorisId?: string;
+  }>({
+    isFavoris: false,
+    favorisId: undefined
+  });
 
-  // Récupération du produit spécifique (nouvel endpoint)
+  // Récupération du produit spécifique selon l'authentification
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    fetch(`http://localhost:3000/api/products/${id}/details`, {
-      headers: { 'accept': '*/*' }
-    })
+    
+    const token = localStorage.getItem('authToken');
+    const headers: Record<string, string> = { 'accept': '*/*' };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    const url = token 
+      ? `http://localhost:3000/api/products/${id}/details/me`
+      : `http://localhost:3000/api/products/${id}/details`;
+    
+    fetch(url, { headers })
       .then(res => {
         if (!res.ok) throw new Error('Produit introuvable');
         return res.json();
       })
-      .then((data: Product) => {
-        setProduct(data);
+      .then((data: any) => {
+        // Si l'utilisateur est connecté, les données sont dans data.details
+        const productData = token ? data.details : data;
+        setProduct(productData);
+        
+        // Mettre à jour l'état local des favoris
+        setLocalFavoris({
+          isFavoris: productData.isFavoris ?? false,
+          favorisId: productData.favorisId
+        });
       })
       .catch(err => {
         showError('Erreur lors de la récupération du produit : ' + err);
@@ -71,30 +97,25 @@ const ProductDetailPage = () => {
       .finally(() => setLoading(false));
   }, [id, showError]);
 
-  // Récupération des produits populaires via la nouvelle route
-  useEffect(() => {
-    setPopularLoading(true);
-    setPopularProducts([]);
-    fetch('http://localhost:3000/api/products/popular', {
-      headers: { 'accept': '*/*' }
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Erreur lors de la récupération des produits populaires');
-        return res.json();
-      })
-      .then((data: Product[]) => {
-        setPopularProducts(data);
-      })
-      .catch(err => {
-        showError('Erreur lors de la récupération des produits populaires : ' + err);
-        setPopularProducts([]);
-      })
-      .finally(() => setPopularLoading(false));
-  }, [showError]);
+
 
   const handleToggleLike = async () => {
     if (!product) return;
-    await addToFavorites(product.id);
+    if (!user) {
+      showError('Vous devez être connecté pour gérer vos favoris.');
+      router.push('/login');
+      return;
+    }
+    
+    if (loadingFav) return;
+    
+    toggleProductFavoris(
+      { id: product.id, isFavoris: localFavoris.isFavoris, favorisId: localFavoris.favorisId },
+      (newFav) => {
+        setLocalFavoris(newFav);
+        setProduct(prev => prev ? { ...prev, ...newFav } : prev);
+      }
+    );
   };
 
   const handleAddToCart = () => {
@@ -106,10 +127,8 @@ const ProductDetailPage = () => {
     }
     setAddingToCart(true);
     
-    // Simuler un délai pour l'UX
     setTimeout(() => {
       try {
-        // Préparer les données du produit pour le panier
         const cartProduct = {
           id: product.id,
           productName: product.productName,
@@ -117,12 +136,10 @@ const ProductDetailPage = () => {
           price: product.price,
         };
 
-        // Ajouter au panier avec la quantité sélectionnée
         addToCart(cartProduct, qty);
 
         showSuccess(`${qty} exemplaire${qty > 1 ? 's' : ''} de "${product.productName}" ajouté${qty > 1 ? 's' : ''} au panier !`);
         
-        // Réinitialiser la quantité
         setQty(1);
       } catch (error) {
         showError('Erreur lors de l\'ajout au panier');
@@ -158,7 +175,6 @@ const ProductDetailPage = () => {
   const releaseYear = product.date ? new Date(product.date).getFullYear() : '';
   const artistName = product.artists && product.artists.length > 0 ? product.artists[0].name : 'Artiste inconnu';
   const categoryName = product.categories && product.categories.length > 0 ? product.categories[0].categoryName : 'Catégorie';
-  const isFavorite = isProductFavorite(product.id);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -166,18 +182,24 @@ const ProductDetailPage = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           <main className="flex-1">
             <div className="bg-white rounded-lg shadow p-6 flex flex-col md:flex-row gap-8">
-              {/* Image vinyle */}
               <div className="flex-shrink-0 flex flex-col items-center w-full md:w-72">
                 <div className="w-60 h-60 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center relative overflow-hidden mb-4">
-                  <div className="absolute inset-4 bg-black rounded-full flex items-center justify-center">
-                    <div className="w-16 h-16 bg-orange-400 rounded-full flex items-center justify-center">
-                      <div className="w-4 h-4 bg-black rounded-full"></div>
+                  {product.imagePath ? (
+                    <img
+                      src={`https://ltwhfwsovkxhbfjzdfet.supabase.co/storage/v1/object/public/images/${product.imagePath}.png`}
+                      alt={product.productName}
+                      className="object-cover w-56 h-56 rounded-full border-4 border-white shadow"
+                    />
+                  ) : (
+                    <div className="absolute inset-4 bg-black rounded-full flex items-center justify-center">
+                      <div className="w-16 h-16 bg-orange-400 rounded-full flex items-center justify-center">
+                        <div className="w-4 h-4 bg-black rounded-full"></div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
-              {/* Infos produit */}
               <div className="flex-1 space-y-3">
                 <h2 className="text-2xl font-bold text-gray-800 mb-1">{product.productName}</h2>
                 <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -229,15 +251,20 @@ const ProductDetailPage = () => {
                   </button>
                   <button
                     onClick={handleToggleLike}
-                    className={`p-2 rounded-full border ${isFavorite ? 'bg-red-500 text-white border-red-500' : 'bg-white text-gray-400 border-gray-300 hover:text-red-500'}`}
+                    disabled={loadingFav}
+                    className={`p-2 rounded-full border-2 transition-all duration-200 ${
+                      localFavoris.isFavoris
+                        ? 'bg-red-500 text-white border-red-500 hover:bg-red-600'
+                        : 'bg-white text-red-500 border-red-500 hover:bg-red-50'
+                    } ${loadingFav ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title={localFavoris.isFavoris ? 'Retirer des favoris' : 'Ajouter aux favoris'}
                   >
-                    <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                    <Heart className={`w-5 h-5 ${localFavoris.isFavoris ? 'fill-current' : ''}`} />
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Onglets Description/Information */}
             <div className="bg-white rounded-lg shadow mt-8 p-6">
               <div className="flex border-b mb-4">
                 {TABS.map((t) => (
@@ -270,19 +297,8 @@ const ProductDetailPage = () => {
               </div>
             </div>
 
-            {/* Produits populaires */}
             <section className="mt-12">
-              <h3 className="text-2xl font-bold text-center mb-2">Produits Populaires</h3>
-              <p className="text-center text-gray-500 mb-8 text-sm">Découvrez d'autres vinyles populaires</p>
-              {popularLoading ? (
-                <div className="text-center text-gray-400 py-8">Chargement...</div>
-              ) : popularProducts.length > 0 ? (
-                <ProductGrid products={popularProducts} loading={false} />
-              ) : (
-                <div className="text-center text-gray-400 py-8">
-                  Aucun produit populaire à afficher pour le moment.
-                </div>
-              )}
+              <RecommendationPeople />
             </section>
           </main>
         </div>
@@ -290,5 +306,7 @@ const ProductDetailPage = () => {
     </div>
   );
 };
+
+
 
 export default ProductDetailPage;

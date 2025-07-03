@@ -18,6 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { openCart } = useCart();
+    const [searchValue, setSearchValue] = useState('');
 
     const handleLogout = () => {
         logout();
@@ -29,6 +30,19 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
         if (!isAuthenticated) {
             e.preventDefault();
             router.push('/login');
+        }
+    };
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchValue.trim()) {
+            if (router.pathname === '/product') {
+                window.dispatchEvent(new CustomEvent('search-productName', { detail: searchValue.trim() }));
+            } else {
+                localStorage.setItem('searchProductName', searchValue.trim());
+                router.push('/product');
+            }
+            setSearchValue('');
         }
     };
 
@@ -87,16 +101,18 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
 
                     {/* Barre de recherche */}
                     <div className="flex-1 flex justify-center max-w-2xl mx-8 hidden md:block">
-                        <div className="flex w-full">
+                        <form className="flex w-full" onSubmit={handleSearch}>
                             <input
                                 type="text"
                                 placeholder="Rechercher des articles..."
                                 className="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none"
+                                value={searchValue}
+                                onChange={e => setSearchValue(e.target.value)}
                             />
-                            <button className="px-4 py-2 bg-gray-800 text-white rounded-r-md hover:bg-gray-900 transition-colors">
+                            <button type="submit" className="px-4 py-2 bg-gray-800 text-white rounded-r-md hover:bg-gray-900 transition-colors">
                                 <Search className="w-5 h-5" />
                             </button>
-                        </div>
+                        </form>
                     </div>
 
                     {/* Actions utilisateur */}
@@ -133,20 +149,6 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                                             >
                                                 Mon profil
                                             </Link>
-                                            <Link
-                                                href="/orders"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                onClick={() => setShowUserMenu(false)}
-                                            >
-                                                Mes commandes
-                                            </Link>
-                                            <Link
-                                                href="/settings"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                onClick={() => setShowUserMenu(false)}
-                                            >
-                                                Paramètres
-                                            </Link>
                                             <hr className="my-1" />
                                             <button
                                                 onClick={handleLogout}
@@ -168,18 +170,17 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                             )}
 
                             {isAuthenticated ? (
-                                <Link href="/wishlist" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
+                                <Link href="/favorite" className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
                                     <Heart className="w-5 h-5" />
                                     <span className="hidden lg:block text-sm">Favoris</span>
                                 </Link>
                             ) : (
-                                <button 
-                                    onClick={handleWishlistClick}
-                                    className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors"
-                                >
+                                <Link 
+                                    href="/login"
+                                    className="flex items-center space-x-1 text-gray-700 hover:text-orange-500 transition-colors">
                                     <Heart className="w-5 h-5" />
                                     <span className="hidden lg:block text-sm">Favoris</span>
-                                </button>
+                                </Link>
                             )}
 
                             <button
@@ -204,16 +205,18 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
                     <div className="md:hidden border-t border-gray-200 py-4">
                         {/* Barre de recherche mobile */}
                         <div className="mb-4">
-                            <div className="flex">
+                            <form className="flex" onSubmit={handleSearch}>
                                 <input
                                     type="text"
                                     placeholder="Rechercher..."
                                     className="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none text-sm"
+                                    value={searchValue}
+                                    onChange={e => setSearchValue(e.target.value)}
                                 />
-                                <button className="px-3 py-2 bg-gray-800 text-white rounded-r-md">
+                                <button type="submit" className="px-3 py-2 bg-gray-800 text-white rounded-r-md">
                                     <Search className="w-4 h-4" />
                                 </button>
-                            </div>
+                            </form>
                         </div>
 
                         {/* Navigation mobile */}
@@ -306,7 +309,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount }) => {
 
                             {isAuthenticated ? (
                                 <Link
-                                    href="/wishlist"
+                                    href="/favorite"
                                     className="flex items-center space-x-2 py-2 px-4 text-gray-700 hover:bg-gray-100 rounded"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >

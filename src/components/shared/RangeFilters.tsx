@@ -50,7 +50,7 @@ const RangeFilter: React.FC<RangeFilterProps> = ({
                         step={step}
                         value={range[0]}
                         onChange={(e) => updateMin(e.target.value)}
-                        className="w-full"
+                        className="w-full accent-orange-500 focus:accent-orange-600"
                     />
                 </div>
                 <div>
@@ -64,7 +64,7 @@ const RangeFilter: React.FC<RangeFilterProps> = ({
                         step={step}
                         value={range[1]}
                         onChange={(e) => updateMax(e.target.value)}
-                        className="w-full"
+                        className="w-full accent-orange-500 focus:accent-orange-600"
                     />
                 </div>
             </div>

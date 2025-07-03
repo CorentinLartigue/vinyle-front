@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3700",
     "start": "next start -p 3700",
-    "build": "next build",
-    "lint": "next lint"
+    "build": "next build"
   },
   "dependencies": {
     "lucide-react": "^0.523.0",
@@ -16,14 +15,11 @@
     "react-toastify": "^11.0.5"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/node": "^20",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.4",
     "tailwindcss": "^4.1.10",
     "typescript": "^5"
   }

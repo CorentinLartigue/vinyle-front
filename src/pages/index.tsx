@@ -7,7 +7,7 @@ import Dovinyl from '@/assets/dovinyl.png'
 import PopularCategories from '@/components/home/PopularCategories';
 import RecommendationProfile from '@/components/home/RecommendationProfile';
 import RecommendationPeople from '@/components/home/RecommendationPeople';
-import NewProductMonth from '@/components/home/NewProductMonth';
+import NewProduct from '@/components/home/NewProduct';
 
 
 const Index: React.FC = () => {
@@ -25,7 +25,7 @@ const Index: React.FC = () => {
 
             <RecommendationPeople />
 
-            <NewProductMonth />
+            <NewProduct />
 
             {/* Why Choose Us */}
             <section className="py-16">

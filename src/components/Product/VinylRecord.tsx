@@ -17,6 +17,8 @@ interface Product {
     imagePath?: string;
     artistInfos: ArtistInfo[];
     categoryNames: string[];
+    isFavoris?: boolean;
+    favorisId?: string;
 }
 
 interface VinylRecordProps {
@@ -25,21 +27,15 @@ interface VinylRecordProps {
 
 const VinylRecord: React.FC<VinylRecordProps> = ({ product }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const { isProductFavorite, toggleFavorite, loading } = useFavorites();
-
-    const handleToggleLike = async (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        if (loading) return; // Éviter les clics multiples pendant le chargement
-        
-        await toggleFavorite(product.id);
-    };
+    const { toggleProductFavoris, loading } = useFavorites();
+    const [localFavoris, setLocalFavoris] = useState({
+        isFavoris: product.isFavoris ?? false,
+        favorisId: product.favorisId
+    });
 
     // Extraire l'année de la date
     const releaseYear = product.date ? new Date(product.date).getFullYear() : '';
     const artistName = product.artistInfos && product.artistInfos.length > 0 ? product.artistInfos[0].name : 'Artiste inconnu';
-    const isFavorite = isProductFavorite(product.id);
 
     return (
         <div
@@ -52,24 +48,22 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ product }) => {
                 className="block cursor-pointer"
             >
                 <div className={`relative mb-4`}>
-                    {/* Vinyle avec animation */}
-                    <div className={`w-full h-48 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center relative overflow-hidden transition-transform duration-300 ${isHovered ? 'scale-105' : ''}`}>
-                        <div className="absolute inset-2 bg-black rounded-full flex items-center justify-center">
-                            <div className="w-12 h-12 bg-orange-400 rounded-full flex items-center justify-center">
-                                <div className="w-3 h-3 bg-black rounded-full"></div>
-                            </div>
-                            {[...Array(8)].map((_, i) => (
-                                <div
-                                    key={i}
-                                    className="absolute border border-gray-700 rounded-full opacity-30"
-                                    style={{
-                                        width: `${20 + i * 15}px`,
-                                        height: `${20 + i * 15}px`
-                                    }}
-                                />
-                            ))}
+                    {/* Vinyle avec animation ou image */}
+                    {product.imagePath ? (
+                        <div className="w-full aspect-square bg-gradient-to-br from-gray-800 to-black rounded-lg flex items-center justify-center">
+                            <img
+                                src={`https://ltwhfwsovkxhbfjzdfet.supabase.co/storage/v1/object/public/images/${product.imagePath}.png`}
+                                alt={product.productName}
+                                className="object-cover w-full h-full rounded-lg"
+                            />
                         </div>
-                    </div>
+                    ) : (
+                        <div className="w-full aspect-square bg-gradient-to-br from-gray-800 to-black rounded-lg flex items-center justify-center">
+                            <div className="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+                                <div className="w-6 h-6 bg-black rounded-full"></div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Informations du produit */}
@@ -112,16 +106,24 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ product }) => {
 
             {/* Bouton favori hors du lien */}
             <button
-                onClick={handleToggleLike}
+                onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (loading) return;
+                    toggleProductFavoris(
+                        { id: product.id, isFavoris: localFavoris.isFavoris, favorisId: localFavoris.favorisId },
+                        (newFav) => setLocalFavoris(newFav)
+                    );
+                }}
                 disabled={loading}
                 className={`absolute top-2 right-2 p-2 rounded-full shadow-sm transition-all duration-200 ${
-                    isFavorite
+                    localFavoris.isFavoris
                         ? 'bg-red-500 text-white hover:bg-red-600'
-                        : 'bg-white text-gray-400 hover:bg-gray-50 hover:text-red-500'
+                        : 'bg-white text-red-500 border-2 border-red-500 hover:bg-red-50'
                 } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                title={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                title={localFavoris.isFavoris ? 'Retirer des favoris' : 'Ajouter aux favoris'}
             >
-                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+                <Heart className={`w-4 h-4 ${localFavoris.isFavoris ? 'fill-current' : ''}`} />
             </button>
         </div>
     );

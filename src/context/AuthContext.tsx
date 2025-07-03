@@ -11,6 +11,10 @@ interface User {
   lastName?: string;
   isEmailVerified?: boolean;
   isActive?: boolean;
+  adress?: string;
+  city?: string;
+  postalCode?: string;
+  isEmailSubscriber?: boolean;
 }
 
 interface AuthContextType {

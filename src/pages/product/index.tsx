@@ -27,6 +27,7 @@ type Filters = {
     categories: string[];
     artists: string[];
     releaseYear?: [number, number];
+    productName?: string;
 };
 
 type FilterData = {
@@ -82,6 +83,13 @@ const useFilteredProducts = (products: Product[], category: string | string[] | 
         const year = new Date(product.date).getFullYear();
         return year >= filters.releaseYear![0] && year <= filters.releaseYear![1];
       });
+    }
+
+    // Filtre par nom de produit (recherche insensible à la casse)
+    if (filters.productName && filters.productName.trim() !== '') {
+      filtered = filtered.filter(product =>
+        product.productName.toLowerCase().includes(filters.productName!.toLowerCase())
+      );
     }
 
     return filtered;
@@ -165,20 +173,23 @@ const ProductList = () => {
 
   // Récupération des produits depuis l'API
   useEffect(() => {
-    fetch('http://localhost:3000/api/products', {
-      headers: { 'accept': '*/*' }
-    })
-      .then(res => {
+    const fetchProducts = async () => {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      const url = token ? 'http://localhost:3000/api/products/with-favoris-status/me' : 'http://localhost:3000/api/products';
+      const headers: Record<string, string> = { 'accept': '*/*' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      try {
+        const res = await fetch(url, { headers });
         if (!res.ok) throw new Error('Erreur lors de la récupération des produits');
-        return res.json();
-      })
-      .then((data: Product[]) => {
+        const data = await res.json();
         setProducts(data);
-      })
-      .catch(err => {
+      } catch (err) {
         showError('Erreur lors de la récupération des produits : ' + err);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
   }, [showError]);
 
   // Récupération des catégories depuis l'API
@@ -209,52 +220,89 @@ const ProductList = () => {
     return categories.find(cat => cat.id === decodedCategory || cat.categoryName === decodedCategory);
   }, [selectedCategoryFromStorage, category, categories]);
 
-  // Initialisation des filtres avec la catégorie sélectionnée si présente
-  const [filters, setFilters] = useState<Filters>({
+  const defaultFilters = {
     priceRange: undefined,
     categories: [],
     artists: [],
     releaseYear: undefined,
-  });
+    productName: '',
+  };
 
-  // Met à jour les plages min/max des filtres quand filterData change
+  const [filters, setFilters] = useState<Filters>(defaultFilters);
+
+  // Hydrate les filtres depuis le localStorage côté client
+  useEffect(() => {
+    // Priorité à la recherche depuis la navbar
+    const productNameFromSearch = localStorage.getItem('searchProductName');
+    if (productNameFromSearch) {
+      localStorage.removeItem('searchProductName');
+      setFilters({
+        ...defaultFilters,
+        productName: productNameFromSearch,
+      });
+      return;
+    }
+    const savedFilters = localStorage.getItem('productFilters');
+    if (savedFilters) {
+      try {
+        const parsed = JSON.parse(savedFilters);
+        const hasActiveFilter = (
+          (parsed.categories && parsed.categories.length > 0) ||
+          (parsed.artists && parsed.artists.length > 0) ||
+          (parsed.productName && parsed.productName.trim() !== '') ||
+          (parsed.priceRange && Array.isArray(parsed.priceRange) && parsed.priceRange.length === 2) ||
+          (parsed.releaseYear && Array.isArray(parsed.releaseYear) && parsed.releaseYear.length === 2)
+        );
+        if (hasActiveFilter) {
+          setFilters(parsed);
+        }
+      } catch {}
+    }
+  }, []);
+
+  // Persister les filtres dans localStorage à chaque changement
+  useEffect(() => {
+    if (filters) {
+      localStorage.setItem('productFilters', JSON.stringify(filters));
+    }
+  }, [filters]);
+
+  // Synchroniser les plages min/max et la catégorie sélectionnée SANS écraser les filtres existants
   useEffect(() => {
     setFilters((prev) => ({
       ...prev,
-      priceRange: filterData.priceRange,
-      releaseYear: filterData.yearRange,
+      priceRange: prev.priceRange ?? filterData.priceRange,
+      releaseYear: prev.releaseYear ?? filterData.yearRange,
     }));
   }, [filterData.priceRange, filterData.yearRange]);
 
-  // Met à jour les filtres quand la catégorie sélectionnée change
   useEffect(() => {
     if (selectedCategory) {
       setFilters((prev) => ({
         ...prev,
-        categories: [selectedCategory.categoryName],
+        categories: prev.categories.length > 0 ? prev.categories : [selectedCategory.categoryName],
       }));
     } else {
       setFilters((prev) => ({
         ...prev,
-        categories: [],
+        categories: prev.categories.length > 0 ? prev.categories : [],
       }));
     }
   }, [selectedCategory]);
 
-  // Fonction pour gérer les changements de filtres
-  const handleFiltersChange: React.Dispatch<React.SetStateAction<Filters>> = (newFilters) => {
-    setFilters((prev) => {
-      const updatedFilters = typeof newFilters === 'function' ? newFilters(prev) : newFilters;
-      
-      // Si l'utilisateur supprime manuellement toutes les catégories, nettoyer le sessionStorage
-      if (updatedFilters.categories.length === 0 && selectedCategoryFromStorage) {
-        sessionStorage.removeItem('selectedCategory');
-        setSelectedCategoryFromStorage(null);
+  // Écoute d'un event custom pour recherche dynamique depuis la navbar
+  useEffect(() => {
+    const handleProductNameSearch = (e: any) => {
+      if (e.detail) {
+        setFilters((prev) => ({
+          ...prev,
+          productName: e.detail,
+        }));
       }
-      
-      return updatedFilters;
-    });
-  };
+    };
+    window.addEventListener('search-productName', handleProductNameSearch);
+    return () => window.removeEventListener('search-productName', handleProductNameSearch);
+  }, []);
 
   const [sortBy, setSortBy] = useState('featured');
   const [currentPage, setCurrentPage] = useState(1);
@@ -300,7 +348,7 @@ const ProductList = () => {
             <aside className="lg:w-80">
               <ProductFilters
                   filters={filters}
-                  setFilters={handleFiltersChange}
+                  setFilters={setFilters}
                   filterData={filterData}
               />
             </aside>
