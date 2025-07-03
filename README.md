@@ -14,7 +14,7 @@ Then, run the development server inside Docker using Docker Compose:
 
 ```bash
 
-docker-compose up
+docker-compose up --build
 
 ```
 Open http://localhost:3700 with your browser to see the result.

@@ -3,9 +3,9 @@ import Image from 'next/image';
 import Gramophone from '@/assets/gramophone.png';
 
 const team = [
-  { name: 'Corentin', role: 'Développeur Frontend' },
-  { name: 'Yanis', role: 'Développeur Backend' },
-  { name: 'Gabriel', role: 'UI/UX Designer / intégrateur' },
+  { name: 'Corentin', role: 'Développeur FullStack' },
+  { name: 'Yanis', role: 'Développeur FullStack' },
+  { name: 'Gabriel', role: 'Développeur Backend' },
   { name: 'Robin', role: 'Développeur Backend' },
   { name: 'Matis', role: 'Développeur Frontend' },
 ];
