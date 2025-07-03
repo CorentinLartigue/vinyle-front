@@ -79,6 +79,12 @@ const Register: React.FC = () => {
       const result = await register(formData.email, formData.password, formData.verifyPassword);
 
       if (result.success) {
+        // Stocke les infos du profil (sauf le mot de passe) dans le localStorage
+        const { firstName, lastName, email, phoneNumber, address, city, postCode, country, regionState } = formData;
+        localStorage.setItem(
+          'pendingProfile',
+          JSON.stringify({ firstName, lastName, email, phoneNumber, address, city, postCode, country, regionState })
+        );
         showSuccess('Inscription réussie ! Vérifiez votre email pour activer votre compte.');
         showInfo('Un email de vérification a été envoyé à votre adresse email.');
       } else {

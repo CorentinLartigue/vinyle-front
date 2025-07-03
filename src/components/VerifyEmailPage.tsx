@@ -1,4 +1,4 @@
-// src/pages/verify-email.tsx
+aé  // src/pages/verify-email.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';

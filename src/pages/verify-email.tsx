@@ -27,6 +27,37 @@ const VerifyEmail: React.FC = () => {
     }
   }, [token, router.isReady]);
 
+  useEffect(() => {
+    if (verificationStatus === 'success') {
+      const pendingProfile = localStorage.getItem('pendingProfile');
+      if (pendingProfile) {
+        const profileData = JSON.parse(pendingProfile);
+        fetch(`http://localhost:3000/api/users/${profileData.email}`)
+          .then(res => res.json())
+          .then(userData => {
+            return fetch('http://localhost:3000/api/profiles', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                firstName: profileData.firstName,
+                lastName: profileData.lastName,
+                adress: profileData.address,
+                city: profileData.city,
+                postalCode: profileData.postCode,
+                isEmailSubscriber: true,
+                userId: userData.id, 
+              }),
+            });
+          })
+          .then(() => {
+            localStorage.removeItem('pendingProfile');
+          })
+          .catch(() => {
+          });
+      }
+    }
+  }, [verificationStatus]);
+
   const handleVerifyEmail = async (verificationToken: string) => {
     try {
       const result = await verifyEmail(verificationToken);
