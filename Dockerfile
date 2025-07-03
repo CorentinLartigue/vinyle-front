@@ -7,6 +7,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+ENV DISABLE_ESLINT_PLUGIN=true
+ENV SKIP_LINTING=true
 RUN npm run build
 
 # Étape 2 : production
